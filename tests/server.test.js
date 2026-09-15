@@ -31,10 +31,26 @@ test("GET /api/menu trả danh sách món", async () => {
   });
 });
 
+test("HEAD /api/menu chỉ trả header nhưng vẫn thành công", async () => {
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/menu`, { method: "HEAD" });
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("content-type") || "", /application\/json/);
+    assert.equal(await response.text(), "");
+  });
+});
+
 test("method không được hỗ trợ trả 405", async () => {
   await withServer(async (baseUrl) => {
     const response = await fetch(`${baseUrl}/api/health`, { method: "POST" });
     assert.equal(response.status, 405);
     assert.equal(response.headers.get("allow"), "GET, HEAD");
+  });
+});
+
+test("route không tồn tại trả 404", async () => {
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/api/not-found`);
+    assert.equal(response.status, 404);
   });
 });
