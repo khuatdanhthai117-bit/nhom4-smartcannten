@@ -29,17 +29,19 @@ export function createServer() {
   return http.createServer(async (request, response) => {
     const url = new URL(request.url || "/", `http://${request.headers.host || "localhost"}`);
 
-    if (url.pathname === "/api/health") {
-      return send(response, 200, JSON.stringify({ ok: true, service: "smart-canteen" }), contentTypes[".json"]);
-    }
-
-    if (url.pathname === "/api/menu") {
-      return send(response, 200, JSON.stringify(menu), contentTypes[".json"]);
-    }
-
     if (request.method !== "GET" && request.method !== "HEAD") {
       response.setHeader("Allow", "GET, HEAD");
       return send(response, 405, "Method Not Allowed");
+    }
+
+    if (url.pathname === "/api/health") {
+      const body = JSON.stringify({ ok: true, service: "smart-canteen" });
+      return send(response, 200, request.method === "HEAD" ? "" : body, contentTypes[".json"]);
+    }
+
+    if (url.pathname === "/api/menu") {
+      const body = JSON.stringify(menu);
+      return send(response, 200, request.method === "HEAD" ? "" : body, contentTypes[".json"]);
     }
 
     const requested = url.pathname === "/" ? "/index.html" : url.pathname;
