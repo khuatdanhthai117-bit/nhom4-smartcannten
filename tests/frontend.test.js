@@ -14,7 +14,7 @@ test('frontend keeps the Smart Canteen core roles', () => {
 });
 
 test('frontend keeps the main ordering areas', () => {
-  for (const marker of ['Thực đơn hôm nay', 'Giỏ hàng', 'Đơn hàng của tôi', 'Quản lý đơn hàng – Nhân viên', 'Quản trị hệ thống']) {
+  for (const marker of ['Thực đơn hôm nay', 'Giỏ hàng', 'Đơn hàng của tôi', 'Bảng điều khiển nhân viên', 'Quản trị hệ thống']) {
     assert.match(html, new RegExp(marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
 });
@@ -26,7 +26,7 @@ test('frontend keeps the order workflow states', () => {
 });
 
 test('frontend keeps demo checkout rules', () => {
-  assert.match(html, /cancelUntil:Date\.now\(\)\+5\*60\*1000/);
+  assert.match(html, /cancelDeadline:Date\.now\(\)\+5\*60\*1000/);
   assert.match(html, /pickupCode/);
   assert.match(html, /selectedPayment/);
   assert.match(html, /selectedSlot/);
@@ -39,6 +39,6 @@ test('frontend keeps the modal set used by the prototype', () => {
 });
 
 test('frontend keeps browser demo session storage', () => {
-  assert.match(html, /smartCanteenUser/);
+  assert.match(html, /smartCanteenDemoUser/);
   assert.match(html, /localStorage/);
 });
