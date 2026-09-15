@@ -6,6 +6,7 @@ import { menu } from "./store.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = path.join(root, "public");
+const enhancementFile = path.join(publicDir, "js", "enhancements.js");
 const defaultHost = process.env.HOST || "127.0.0.1";
 const defaultPort = Number(process.env.PORT || 3000);
 const contentTypes = {
@@ -23,6 +24,17 @@ function send(response, status, body, type = "text/plain; charset=utf-8") {
     "Referrer-Policy": "no-referrer"
   });
   response.end(body);
+}
+
+async function prepareHtml(body) {
+  const html = body.toString("utf8");
+  if (!html.includes("</body>")) return body;
+  try {
+    const enhancement = await readFile(enhancementFile, "utf8");
+    return Buffer.from(html.replace("</body>", `<script src="/js/enhancements.js"></script>\n</body>`), "utf8");
+  } catch {
+    return body;
+  }
 }
 
 export function createServer() {
@@ -54,7 +66,8 @@ export function createServer() {
 
     try {
       if (!(await stat(filePath)).isFile()) return send(response, 404, "Not Found");
-      const body = request.method === "HEAD" ? "" : await readFile(filePath);
+      let body = request.method === "HEAD" ? Buffer.alloc(0) : await readFile(filePath);
+      if (request.method === "GET" && path.extname(filePath) === ".html") body = await prepareHtml(body);
       return send(response, 200, body, contentTypes[path.extname(filePath)] || "application/octet-stream");
     } catch {
       return send(response, 404, "Not Found");
