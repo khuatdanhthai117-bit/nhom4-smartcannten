@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Canteen - Hệ thống đặt món thông minh</title>
+<style>
+:root{--primary:#e63946;--primary-dark:#c1121f;--secondary:#1d3557;--accent:#457b9d;--success:#2a9d8f;--warning:#f4a261;--danger:#dc3545;--bg:#f5f7fa;--card:#fff;--text:#212529;--muted:#6c757d;--border:#dee2e6;--shadow:0 4px 15px rgba(0,0,0,.08);--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.hidden{display:none!important}
+header{background:linear-gradient(135deg,var(--secondary),var(--accent));color:#fff;position:sticky;top:0;z-index:1000;box-shadow:var(--shadow)}
+.header-inner{max-width:1250px;margin:auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.logo{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800}.logo-icon{background:var(--primary);width:40px;height:40px;border-radius:50%;display:grid;place-items:center}
+.header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.header-btn{border:0;background:rgba(255,255,255,.15);color:#fff;padding:8px 13px;border-radius:20px}.header-btn:hover{background:rgba(255,255,255,.28)}
+.user-pill{padding:7px 12px;background:rgba(255,255,255,.12);border-radius:20px;font-size:14px}.role-badge{background:var(--primary);padding:2px 7px;border-radius:12px;font-size:11px;margin-left:4px}
+.page{max-width:1250px;margin:auto;padding:25px 20px}.hero{background:linear-gradient(135deg,#fff,#eef5fa);border-radius:20px;padding:35px;margin-bottom:22px;display:flex;justify-content:space-between;gap:20px;align-items:center}.hero h1{font-size:34px;color:var(--secondary);margin-bottom:8px}.hero p{color:var(--muted);max-width:700px}.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:0;border-radius:9px;padding:10px 16px;font-weight:600}.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}.btn-secondary{background:#e9ecef;color:var(--text)}.btn-success{background:var(--success);color:#fff}.btn-warning{background:var(--warning);color:#fff}.btn-danger{background:var(--danger);color:#fff}.btn-dark{background:var(--secondary);color:#fff}.btn:disabled{opacity:.5;cursor:not-allowed}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:22px 0 14px}.section-title h2{font-size:22px;color:var(--secondary)}
+.search-row{display:flex;gap:10px;margin-bottom:15px}.search-box{position:relative;flex:1}.search-box input{width:100%;padding:12px 15px 12px 42px;border:1px solid var(--border);border-radius:10px;background:#fff}.search-box span{position:absolute;left:14px;top:10px}
+.categories{display:flex;gap:8px;overflow:auto;padding-bottom:7px}.cat-btn{white-space:nowrap;border:1px solid var(--border);background:#fff;padding:8px 15px;border-radius:30px}.cat-btn.active,.cat-btn:hover{background:var(--primary);border-color:var(--primary);color:#fff}
+.layout{display:grid;grid-template-columns:1fr 340px;gap:20px}.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}.menu-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.food-img{height:155px;background:linear-gradient(45deg,#f1f3f5,#e9ecef);display:grid;place-items:center;font-size:55px;position:relative}.food-badge{position:absolute;left:10px;top:10px;background:var(--success);color:#fff;border-radius:20px;padding:4px 9px;font-size:12px}.out-badge{position:absolute;right:10px;top:10px;background:#6c757d;color:#fff;border-radius:20px;padding:4px 9px;font-size:12px}
+.food-body{padding:15px;display:flex;flex-direction:column;flex:1}.food-name{font-size:17px;font-weight:700;margin-bottom:5px}.food-desc{font-size:13px;color:var(--muted);min-height:42px;margin-bottom:10px}.food-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:auto}.price{font-weight:800;color:var(--primary);font-size:18px}.old-price{text-decoration:line-through;color:#999;font-size:12px;margin-right:5px}.add-circle{width:38px;height:38px;border:0;border-radius:50%;background:var(--primary);color:#fff;font-size:22px}
+.cart{position:sticky;top:85px;height:max-content}.cart-item{padding:10px 0;border-bottom:1px solid var(--border)}.cart-item-top{display:flex;justify-content:space-between;gap:8px}.qty{display:flex;align-items:center;gap:7px;margin-top:6px}.qty button{width:27px;height:27px;border:1px solid var(--border);background:#fff;border-radius:6px}.note-small{font-size:12px;color:var(--muted);font-style:italic}.summary{margin-top:14px}.summary-row{display:flex;justify-content:space-between;margin:6px 0}.total-row{font-size:19px;font-weight:800;border-top:1px dashed var(--border);padding-top:10px}
+.banner{background:linear-gradient(90deg,var(--success),#264653);color:#fff;padding:10px 15px;text-align:center;border-radius:10px;margin-bottom:15px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:none;align-items:center;justify-content:center;padding:15px}.overlay.show{display:flex}.modal{background:#fff;width:100%;max-width:620px;max-height:92vh;overflow:auto;border-radius:18px;padding:24px}.modal.large{max-width:900px}.modal.xlarge{max-width:1100px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal-head h2{color:var(--secondary)}.close{border:0;background:#eee;border-radius:50%;width:34px;height:34px;font-size:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-group{margin-bottom:13px}.form-group.full{grid-column:1/-1}label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:9px;outline:none;background:#fff}input:focus,select:focus,textarea:focus{border-color:var(--accent)}textarea{resize:vertical}
+.auth-screen{min-height:100vh;background:linear-gradient(135deg,var(--secondary),var(--accent),var(--primary));display:flex;align-items:center;justify-content:center;padding:20px}.auth-card{background:#fff;width:100%;max-width:470px;border-radius:20px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.25)}.auth-logo{text-align:center;margin-bottom:20px}.auth-logo .big-icon{font-size:50px}.auth-logo h1{color:var(--secondary)}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:18px}.auth-tab{border:0;padding:9px;background:#eef1f4;border-radius:8px;font-size:13px}.auth-tab.active{background:var(--primary);color:#fff}.auth-switch{text-align:center;margin-top:15px;color:var(--muted);font-size:14px}.link{color:var(--primary);font-weight:700;cursor:pointer}.demo{margin-top:18px;background:#f8f9fa;padding:12px;border-radius:9px;font-size:12px;color:var(--muted)}
+.dashboard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}.stat{background:#fff;border-radius:14px;padding:18px;box-shadow:var(--shadow)}.stat .label{color:var(--muted);font-size:13px}.stat .value{font-size:27px;font-weight:800;color:var(--secondary);margin-top:4px}
+.order-list{display:flex;flex-direction:column;gap:12px}.order-card{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:17px;border-left:5px solid var(--accent);margin-bottom:12px}.order-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.order-code{font-size:18px;font-weight:800;color:var(--secondary)}.status{display:inline-block;padding:4px 9px;border-radius:20px;font-size:12px;font-weight:700;background:#eef1f4}.status.waiting{background:#fff3cd;color:#856404}.status.confirmed{background:#d1ecf1;color:#0c5460}.status.preparing{background:#cfe2ff;color:#084298}.status.ready{background:#d1e7dd;color:#0f5132}.status.received{background:#d1e7dd;color:#0f5132}.status.rejected,.status.cancelled{background:#f8d7da;color:#842029}
+.order-items{margin:12px 0;padding:10px;background:#f8f9fa;border-radius:9px}.order-item-row{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}
+.staff-layout{display:grid;grid-template-columns:1fr 350px;gap:20px}.table-wrap{overflow:auto}.data-table{width:100%;border-collapse:collapse;background:#fff}.data-table th,.data-table td{padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}.data-table th{background:#f1f3f5}
+.ingredient-status{font-size:12px;padding:4px 8px;border-radius:15px}.stock-ok{background:#d1e7dd;color:#0f5132}.stock-low{background:#fff3cd;color:#856404}.stock-out{background:#f8d7da;color:#842029}.info-box{background:#eef6fb;border-left:4px solid var(--accent);padding:12px;border-radius:7px;margin-bottom:15px;font-size:14px}
+.payment-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.payment-option{border:2px solid var(--border);border-radius:12px;padding:15px}.payment-option.selected{border-color:var(--primary);background:#fff5f5}.payment-option input{width:auto}.qr{width:190px;height:190px;background:#fff;border:10px solid #fff;box-shadow:0 0 0 1px #ddd;margin:10px auto;display:grid;place-items:center;font-size:65px}
+.pickup-code{font-size:34px;letter-spacing:4px;font-weight:900;text-align:center;color:var(--primary);padding:15px}.slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.slot{border:1px solid var(--border);background:#fff;padding:10px;border-radius:8px;text-align:center}.slot.selected{background:var(--primary);color:#fff;border-color:var(--primary)}
+.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--success);color:#fff;padding:12px 20px;border-radius:30px;z-index:5000;opacity:0;transition:.3s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.footer{text-align:center;color:var(--muted);padding:30px}.admin-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.admin-nav button.active{background:var(--secondary);color:#fff}
+.product-detail{display:grid;grid-template-columns:240px 1fr;gap:20px}.detail-image{height:240px;border-radius:15px;background:#f1f3f5;display:grid;place-items:center;font-size:90px}.stars{color:#f4a261;font-size:22px}.review{padding:12px;border-bottom:1px solid var(--border)}
+.timeline{display:flex;justify-content:space-between;gap:4px;margin:15px 0}.timeline-step{flex:1;text-align:center;font-size:11px;color:#999}.timeline-step.done{color:var(--success);font-weight:700}.timeline-dot{width:18px;height:18px;border-radius:50%;background:#ddd;margin:0 auto 4px}.timeline-step.done .timeline-dot{background:var(--success)}
+@media(max-width:950px){.layout,.staff-layout{grid-template-columns:1fr}.cart{position:static}.dashboard-grid{grid-template-columns:1fr 1fr}.hero{flex-direction:column;align-items:flex-start}}
+@media(max-width:600px){.form-grid,.payment-options,.product-detail{grid-template-columns:1fr}.dashboard-grid{grid-template-columns:1fr 1fr}.slot-grid{grid-template-columns:1fr 1fr}.hero h1{font-size:26px}.header-inner{align-items:flex-start;flex-direction:column}.header-actions{width:100%}}
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ
+========================================================= -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="big-icon">🍜</div>
+      <h1>Smart Canteen</h1>
+      <p>Hệ thống đặt món thông minh</p>
+    </div>
+
+    <div id="loginPanel">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="setLoginType('student',this)">Sinh viên</button>
+        <button class="auth-tab" onclick="setLoginType('lecturer',this)">Giảng viên</button>
+        <button class="auth-tab" onclick="setLoginType('guest',this)">Khách</button>
+        <button class="auth-tab" onclick="setLoginType('staffadmin',this)">Nhân viên / Admin</button>
+      </div>
+      <form onsubmit="login(event)">
+        <div class="form-group">
+          <label id="loginIdentifierLabel">MSSV / Email</label>
+          <input id="loginIdentifier" required placeholder="Nhập MSSV hoặc email">
+        </div>
+        <div class="form-group" id="loginPasswordGroup">
+          <label>Mật khẩu</label>
+          <input id="loginPassword" type="password" required placeholder="Nhập mật khẩu">
+        </div>
+        <div class="form-group hidden" id="otpGroup">
+          <label>Mã OTP</label>
+          <input id="loginOtp" maxlength="6" placeholder="OTP demo: 123456">
+        </div>
+        <button class="btn btn-primary" style="width:100%" id="loginButton">Đăng nhập</button>
+      </form>
+      <div class="auth-switch">Chưa có tài khoản? <span class="link" onclick="showRegister()">Đăng ký ngay</span></div>
+      <div class="demo">
+        <b>Tài khoản demo:</b><br>
+        Sinh viên: <code>22123456</code> / <code>sv123</code><br>
+        Giảng viên: <code>gv@truong.edu.vn</code> / <code>gv123</code><br>
+        Khách: nhập SĐT rồi OTP <code>123456</code><br>
+        Nhân viên: <code>staff@smartcanteen.vn</code> / <code>staff123</code><br>
+        Admin: <code>admin@smartcanteen.vn</code> / <code>admin123</code><br>
+        <small>Chọn tab “Nhân viên / Admin” để đăng nhập 2 tài khoản trên.</small>
+      </div>
+    </div>
+
+    <div id="registerPanel" class="hidden">
+      <h2 style="margin-bottom:15px;color:var(--secondary)">Đăng ký tài khoản</h2>
+      <div class="form-group">
+        <label>Loại tài khoản</label>
+        <select id="registerType" onchange="changeRegisterType()">
+          <option value="student">Sinh viên</option>
+          <option value="lecturer">Giảng viên</option>
+          <option value="guest">Khách vãng lai</option>
+        </select>
+      </div>
+      <form onsubmit="register(event)">
+        <div class="form-group">
+          <label>Họ và tên *</label>
+          <input id="regName" required>
+        </div>
+        <div class="form-group" id="regMssvGroup">
+          <label>MSSV *</label>
+          <input id="regMssv" placeholder="Ví dụ: 22123456">
+        </div>
+        <div class="form-group" id="regEmailGroup">
+          <label>Email trường *</label>
+          <input id="regEmail" type="email" placeholder="email@truong.edu.vn">
+        </div>
+        <div class="form-group">
+          <label>Số điện thoại *</label>
+          <input id="regPhone" required placeholder="09xxxxxxxx">
+        </div>
+        <div class="form-group" id="regPasswordGroup">
+          <label>Mật khẩu *</label>
+          <input id="regPassword" type="password" minlength="4">
+        </div>
+        <div class="form-group">
+          <label>Lớp</label>
+          <input id="regClass" placeholder="Ví dụ: SE1801">
+        </div>
+        <button class="btn btn-primary" style="width:100%">Tạo tài khoản</button>
+      </form>
+      <div class="auth-switch">Đã có tài khoản? <span class="link" onclick="showLogin()">Đăng nhập</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     ỨNG DỤNG CHÍNH
+========================================================= -->
+<div id="mainApp" class="hidden">
+<header>
+  <div class="header-inner">
+    <div class="logo"><span class="logo-icon">🍜</span>Smart Canteen</div>
+    <div class="header-actions">
+      <div class="user-pill">👤 <span id="headerName">Người dùng</span> <span class="role-badge" id="headerRole">Khách</span></div>
+      <button class="header-btn" onclick="showHome()">🏠 Trang chủ</button>
+      <button class="header-btn" onclick="showOrders()">📋 Đơn hàng</button>
+      <button class="header-btn" id="staffHeaderBtn" onclick="showStaff()" style="display:none">👨‍🍳 Nhân viên</button>
+      <button class="header-btn" id="adminHeaderBtn" onclick="showAdmin()" style="display:none">⚙️ Quản trị</button>
+      <button class="header-btn" onclick="logout()">Đăng xuất</button>
+    </div>
+  </div>
+</header>
+
+<main id="homePage" class="page">
+  <section class="hero">
+    <div>
+      <h1>Đặt món trước – nhận món nhanh</h1>
+      <p>Chọn món, tìm kiếm món, chọn khung giờ nhận hàng, nhận mã nhận hàng và thanh toán online. Hạn chế xếp hàng tại căn tin.</p>
+    </div>
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="document.getElementById('menuSection').scrollIntoView()">🍱 Đặt món ngay</button>
+      <button class="btn btn-secondary" onclick="showOrders()">Xem đơn hàng</button>
+    </div>
+  </section>
+
+  <div id="discountBanner" class="banner hidden"></div>
+
+  <section id="menuSection">
+    <div class="section-title">
+      <h2>🍽️ Thực đơn</h2><span id="menuResultCount" style="color:var(--muted)"></span>
+    </div>
+    <div class="search-row">
+      <div class="search-box"><span>🔎</span><input id="searchInput" oninput="renderMenu()" placeholder="Tìm kiếm món ăn, đồ uống, combo..."></div>
+      <button class="btn btn-secondary" onclick="clearSearch()">Xóa</button>
+    </div>
+    <div class="categories" id="categories"></div>
+
+    <div class="layout" style="margin-top:15px">
+      <div><div class="menu-grid" id="menuGrid"></div></div>
+      <aside class="cart card">
+        <div class="section-title" style="margin:0 0 10px"><h2>🛒 Giỏ hàng</h2><span id="cartCount">0 món</span></div>
+        <div id="cartItems"></div>
+        <div class="summary">
+          <div class="summary-row"><span>Tạm tính</span><b id="subtotal">0đ</b></div>
+          <div class="summary-row" id="discountRow"><span>Giảm giá</span><b id="discountAmount">0đ</b></div>
+          <div class="summary-row total-row"><span>Tổng cộng</span><span id="total">0đ</span></div>
+          <button id="checkoutBtn" class="btn btn-primary" style="width:100%;margin-top:12px" onclick="openCheckout()" disabled>Đặt món</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<main id="ordersPage" class="page hidden">
+  <div class="section-title"><h2>📋 Đơn hàng của tôi</h2><button class="btn btn-secondary" onclick="showHome()">← Quay lại menu</button></div>
+  <div id="myOrders"></div>
+</main>
+
+<main id="staffPage" class="page hidden">
+  <div class="section-title">
+    <div><h2>👨‍🍳 Trang dành cho nhân viên</h2><p style="color:var(--muted)">Tiếp nhận đơn, kiểm tra nguyên liệu và giao món</p></div>
+    <button class="btn btn-secondary" onclick="showHome()">← Trang chính</button>
+  </div>
+  <div class="dashboard-grid" id="staffStats"></div>
+  <div class="staff-layout">
+    <section>
+      <div class="card">
+        <div class="section-title" style="margin-top:0"><h2>Đơn cần xử lý</h2><button class="btn btn-secondary" onclick="renderStaff()">↻ Làm mới</button></div>
+        <div id="staffOrders"></div>
+      </div>
+    </section>
+    <aside>
+      <div class="card">
+        <div class="section-title" style="margin-top:0"><h2>🥬 Nguyên liệu</h2></div>
+        <div id="staffIngredients"></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="openIngredientUpdate()">Cập nhật nguyên liệu</button>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<main id="adminPage" class="page hidden">
+  <div class="section-title">
+    <div><h2>⚙️ Quản trị Smart Canteen</h2><p style="color:var(--muted)">Quản lý món, nguyên liệu, khuyến mãi và báo cáo</p></div>
+    <button class="btn btn-secondary" onclick="showHome()">← Trang chính</button>
+  </div>
+  <div class="admin-nav">
+    <button class="btn btn-secondary active" onclick="adminTab('foods',this)">🍱 Món ăn</button>
+    <button class="btn btn-secondary" onclick="adminTab('ingredients',this)">🥬 Nguyên liệu</button>
+    <button class="btn btn-secondary" onclick="adminTab('reports',this)">📊 Báo cáo</button>
+    <button class="btn btn-secondary" onclick="adminTab('promotions',this)">🎁 Khuyến mãi</button>
+    <button class="btn btn-secondary" onclick="adminTab('reviews',this)">⭐ Đánh giá</button>
+  </div>
+  <div id="adminContent"></div>
+</main>
+
+<footer class="footer">Smart Canteen • Hệ thống đặt món thông minh • 2026</footer>
+</div>
+
+<!-- =========================================================
+     MODALS
+========================================================= -->
+<div class="overlay" id="foodDetailOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>Chi tiết món</h2><button class="close" onclick="closeModal('foodDetailOverlay')">×</button></div>
+    <div id="foodDetail"></div>
+  </div>
+</div>
+
+<div class="overlay" id="checkoutOverlay">
+  <div class="modal large">
+    <div class="modal-head"><h2>🛍️ Đặt món</h2><button class="close" onclick="closeModal('checkoutOverlay')">×</button></div>
+    <div id="checkoutStep1">
+      <div class="info-box">Bước 1: Kiểm tra giỏ hàng và chọn <b>khung giờ nhận hàng</b>.</div>
+      <div id="checkoutItems"></div>
+      <h3 style="margin:18px 0 8px">⏰ Chọn thời gian nhận</h3>
+      <div class="slot-grid" id="slotGrid"></div>
+      <div class="form-group" style="margin-top:15px"><label>Ghi chú cho đơn hàng</label><textarea id="orderNote" rows="3" placeholder="Ví dụ: ít hành, không cay..."></textarea></div>
+      <button class="btn btn-primary" style="width:100%" onclick="continueToPayment()">Tiếp tục thanh toán →</button>
+    </div>
+    <div id="checkoutStep2" class="hidden">
+      <div class="info-box">Bước 2: Hệ thống tạo <b>mã nhận hàng</b> trước khi thanh toán.</div>
+      <div class="pickup-code" id="generatedPickupCode">S123456</div>
+      <p style="text-align:center;color:var(--muted)">Đưa mã này cho nhân viên khi nhận món.</p>
+      <hr style="margin:18px 0;border:0;border-top:1px solid var(--border)">
+      <h3>💳 Thanh toán online</h3>
+      <div class="payment-options" style="margin-top:10px">
+        <label class="payment-option selected" id="momoOption"><input type="radio" name="payment" value="momo" checked onchange="selectPayment('momo')"> <b>Ví MoMo</b><br><small>Thanh toán online demo</small></label>
+        <label class="payment-option" id="qrOption"><input type="radio" name="payment" value="qr" onchange="selectPayment('qr')"> <b>QR chuyển khoản</b><br><small>Quét QR để chuyển khoản demo</small></label>
+      </div>
+      <div id="paymentBox" style="margin-top:15px"></div>
+      <div style="display:flex;gap:10px;margin-top:18px"><button class="btn btn-secondary" onclick="backToStep1()">← Quay lại</button><button class="btn btn-primary" style="flex:1" onclick="finishPayment()">Xác nhận thanh toán & đặt món</button></div>
+    </div>
+    <div id="checkoutSuccess" class="hidden"></div>
+  </div>
+</div>
+
+<div class="overlay" id="otpOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>🔐 Xác thực OTP</h2><button class="close" onclick="closeModal('otpOverlay')">×</button></div>
+    <div class="info-box">OTP demo: <b>123456</b>. Bản thật có thể gửi OTP qua SMS.</div>
+    <div class="form-group"><label>Nhập OTP</label><input id="registerOtp" maxlength="6" placeholder="123456"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="verifyRegisterOtp()">Xác nhận</button>
+  </div>
+</div>
+
+<div class="overlay" id="ingredientOverlay">
+  <div class="modal large">
+    <div class="modal-head"><h2>🥬 Cập nhật nguyên liệu</h2><button class="close" onclick="closeModal('ingredientOverlay')">×</button></div>
+    <div class="info-box">Nhân viên cập nhật số lượng nguyên liệu định kỳ <b>1 giờ/lần</b>. Hệ thống ghi nhận thời điểm cập nhật gần nhất.</div>
+    <div id="ingredientUpdateForm"></div>
+    <button class="btn btn-success" style="width:100%;margin-top:12px" onclick="saveIngredientUpdate()">Lưu cập nhật</button>
+  </div>
+</div>
+
+<div class="overlay" id="rejectOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>❌ Từ chối đơn</h2><button class="close" onclick="closeModal('rejectOverlay')">×</button></div>
+    <div class="form-group"><label>Lý do từ chối *</label><textarea id="rejectReason" rows="4" placeholder="Ví dụ: Không đủ nguyên liệu thịt bò..."></textarea></div>
+    <button class="btn btn-danger" style="width:100%" onclick="confirmReject()">Xác nhận từ chối</button>
+  </div>
+</div>
+
+<div class="overlay" id="pickupOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>🎫 Xác nhận nhận món</h2><button class="close" onclick="closeModal('pickupOverlay')">×</button></div>
+    <div class="info-box">Nhập mã nhận hàng khách cung cấp.</div>
+    <div class="form-group"><label>Mã nhận hàng</label><input id="pickupInput" placeholder="S123456"></div>
+    <button class="btn btn-success" style="width:100%" onclick="verifyPickup()">Xác nhận đã giao</button>
+  </div>
+</div>
+
+<div class="overlay" id="reviewOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>⭐ Đánh giá món ăn</h2><button class="close" onclick="closeModal('reviewOverlay')">×</button></div>
+    <input type="hidden" id="reviewOrderId">
+    <div class="form-group"><label>Số sao</label><select id="reviewStars"><option value="5">★★★★★ - Rất tốt</option><option value="4">★★★★ - Tốt</option><option value="3">★★★ - Bình thường</option><option value="2">★★ - Chưa tốt</option><option value="1">★ - Không hài lòng</option></select></div>
+    <div class="form-group"><label>Nội dung</label><textarea id="reviewText" rows="4" placeholder="Chia sẻ cảm nhận..."></textarea></div>
+    <button class="btn btn-primary" style="width:100%" onclick="submitReview()">Gửi đánh giá</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Thành công!</div>
+
+<script>
+/* =========================================================
+   SMART CANTEEN - JAVASCRIPT
+   Bản này là frontend demo chạy độc lập.
+   Khi nối Java/SQL Server, các mảng dữ liệu sẽ được thay
+   bằng API/Servlet/HttpServer endpoint.
+========================================================= */
+
+const ROLE_INFO={
+ student:{label:"Sinh viên",discount:.10},
+ lecturer:{label:"Giảng viên",discount:.05},
+ guest:{label:"Khách vãng lai",discount:0},
+ staff:{label:"Nhân viên",discount:0},
+ admin:{label:"Quản trị viên",discount:0}
+};
+
+let users=[
+ {id:1,name:"Nguyễn Văn A",role:"student",mssv:"22123456",email:"sv@truong.edu.vn",phone:"0901111111",password:"sv123",className:"SE1801"},
+ {id:2,name:"Trần Thị B",role:"lecturer",email:"gv@truong.edu.vn",phone:"0902222222",password:"gv123"},
+ {id:3,name:"Nguyễn Nhân Viên",role:"staff",email:"staff@smartcanteen.vn",phone:"0903333333",password:"staff123"},
+ {id:4,name:"Quản trị viên",role:"admin",email:"admin@smartcanteen.vn",phone:"0904444444",password:"admin123"}
+];
+
+let menuData=[
+ {id:1,name:"Cơm gà xối mỡ",desc:"Cơm trắng, gà xối mỡ giòn và nước sốt.",price:45000,category:"savory",emoji:"🍗",badge:"Bán chạy",ingredients:"Gà, gạo, dầu ăn, nước sốt",available:true},
+ {id:2,name:"Cơm tấm sườn",desc:"Sườn nướng, trứng ốp la và đồ chua.",price:42000,category:"savory",emoji:"🍚",ingredients:"Gạo, sườn heo, trứng, rau",available:true},
+ {id:3,name:"Bún chả",desc:"Bún, chả nướng và nước mắm.",price:40000,category:"savory",emoji:"🥩",ingredients:"Bún, thịt heo, rau, nước mắm",available:true},
+ {id:4,name:"Phở bò",desc:"Nước dùng xương, thịt bò và bánh phở.",price:50000,category:"noodle",emoji:"🍜",badge:"Đề xuất",ingredients:"Bánh phở, bò, xương, rau",available:true},
+ {id:5,name:"Mì xào bò",desc:"Mì trứng xào bò và rau cải.",price:40000,category:"noodle",emoji:"🍝",ingredients:"Mì, bò, rau cải, dầu",available:true},
+ {id:6,name:"Mì trộn xúc xích",desc:"Mì trộn sốt đặc biệt và xúc xích.",price:35000,category:"noodle",emoji:"🍝",ingredients:"Mì, xúc xích, sốt, rau",available:true},
+ {id:7,name:"Trà đào cam sả",desc:"Trà đào, cam tươi và sả.",price:25000,category:"drink",emoji:"🍑",ingredients:"Trà, đào, cam, sả",available:true},
+ {id:8,name:"Cà phê sữa đá",desc:"Cà phê phin và sữa đặc.",price:20000,category:"drink",emoji:"☕",ingredients:"Cà phê, sữa, đá",available:true},
+ {id:9,name:"Nước cam ép",desc:"Cam tươi nguyên chất.",price:22000,category:"drink",emoji:"🍊",ingredients:"Cam tươi",available:true},
+ {id:10,name:"Trà sữa trân châu",desc:"Trà sữa và trân châu đen.",price:30000,category:"drink",emoji:"🧋",ingredients:"Trà, sữa, trân châu",available:true},
+ {id:11,name:"Combo sáng A",desc:"Bánh mì + cà phê sữa đá.",price:45000,category:"morning",emoji:"🥪",badge:"Combo sáng",ingredients:"Bánh mì, trứng, thịt, cà phê, sữa",available:true},
+ {id:12,name:"Combo sáng B",desc:"Mì trứng + nước cam.",price:52000,category:"morning",emoji:"🍳",ingredients:"Mì, trứng, cam",available:true},
+ {id:13,name:"Combo chiều A",desc:"Mì xào bò + trà đào.",price:58000,category:"afternoon",emoji:"🍱",badge:"Combo chiều",ingredients:"Mì, bò, rau, trà, đào, cam",available:true},
+ {id:14,name:"Combo chiều B",desc:"Cơm gà + nước uống.",price:60000,category:"afternoon",emoji:"🍗",ingredients:"Gạo, gà, nước uống",available:true}
+];
+
+const categories=[
+ {id:"all",name:"Tất cả"},
+ {id:"savory",name:"Món mặn"},
+ {id:"noodle",name:"Món mì"},
+ {id:"drink",name:"Nước uống"},
+ {id:"morning",name:"Combo sáng"},
+ {id:"afternoon",name:"Combo chiều"}
+];
+
+let ingredients=[
+ {id:1,name:"Gạo",qty:25,unit:"kg",min:5,lastUpdate:"14/09/2026 14:00"},
+ {id:2,name:"Thịt gà",qty:12,unit:"kg",min:3,lastUpdate:"14/09/2026 14:00"},
+ {id:3,name:"Thịt bò",qty:2.5,unit:"kg",min:3,lastUpdate:"14/09/2026 14:00"},
+ {id:4,name:"Trứng",qty:80,unit:"quả",min:20,lastUpdate:"14/09/2026 14:00"},
+ {id:5,name:"Mì",qty:15,unit:"kg",min:4,lastUpdate:"14/09/2026 14:00"},
+ {id:6,name:"Cam",qty:20,unit:"kg",min:5,lastUpdate:"14/09/2026 14:00"},
+ {id:7,name:"Trà",qty:8,unit:"kg",min:2,lastUpdate:"14/09/2026 14:00"},
+ {id:8,name:"Sữa",qty:10,unit:"lít",min:3,lastUpdate:"14/09/2026 14:00"}
+];
+
+let promotions=[
+ {id:1,name:"Ưu đãi sinh viên",description:"Sinh viên giảm 10%",discount:10,active:true},
+ {id:2,name:"Ưu đãi giảng viên",description:"Giảng viên giảm 5%",discount:5,active:true},
+ {id:3,name:"Combo chiều",description:"Giảm thêm 5% cho combo chiều",discount:5,active:true}
+];
+
+let orders=[];
+let reviews=[];
+let cart=[];
+let currentUser=null;
+let currentCategory="all";
+let loginType="student";
+let selectedSlot="";
+let selectedPayment="momo";
+let pendingRegister=null;
+let rejectingOrderId=null;
+let pickupOrderId=null;
+let nextOrderId=1001;
+let nextUserId=10;
+let nextReviewId=1;
+let nextMenuId=20;
+
+/* =========================================================
+   HÀM TIỆN ÍCH
+========================================================= */
+function formatPrice(n){return Number(n||0).toLocaleString("vi-VN")+"đ"}
+
+function escapeHtml(str){
+ return String(str??"").replace(/[&<>"']/g,m=>({
+   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+ }[m]));
+}
+
+function showToast(msg,error=false){
+ const t=document.getElementById("toast");
+ t.textContent=msg;
+ t.style.background=error?"var(--danger)":"var(--success)";
+ t.classList.add("show");
+ setTimeout(()=>t.classList.remove("show"),2500);
+}
+
+function closeModal(id){
+ document.getElementById(id).classList.remove("show");
+}
+
+function showOnly(id){
+ ["homePage","ordersPage","staffPage","adminPage"]
+   .forEach(x=>document.getElementById(x).classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+}
+
+function getDiscount(){
+ if(!currentUser)return 0;
+ return ROLE_INFO[currentUser.role]?.discount||0;
+}
+
+function priceFor(item){
+ return Math.round(item.price*(1-getDiscount()));
+}
+
+function makePickupCode(user){
+ if(user.role==="student"){
+   return "S"+String(user.mssv||"000000").slice(-6);
+ }
+ if(user.role==="lecturer"){
+   return "G"+String(user.phone||"000000").replace(/\D/g,"").slice(-6);
+ }
+ return "K"+String(user.phone||"000000").replace(/\D/g,"").slice(-6);
+}
+
+function statusClass(s){
+ if(s==="Chờ xác nhận")return "waiting";
+ if(s==="Đã xác nhận")return "confirmed";
+ if(s==="Đang chuẩn bị")return "preparing";
+ if(s==="Sẵn sàng nhận")return "ready";
+ if(s==="Đã nhận")return "received";
+ if(s==="Đã từ chối"||s==="Đã hủy")return "rejected";
+ return "";
+}
+
+/* =========================================================
+   ĐĂNG NHẬP
+========================================================= */
+function setLoginType(type,btn){
+ loginType=type;
+ document.querySelectorAll(".auth-tab").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");
+
+ const label=document.getElementById("loginIdentifierLabel");
+ const input=document.getElementById("loginIdentifier");
+ const pw=document.getElementById("loginPasswordGroup");
+ const otp=document.getElementById("otpGroup");
+
+ if(type==="student"){
+   label.textContent="MSSV / Email";
+   input.placeholder="Nhập MSSV hoặc email";
+   pw.classList.remove("hidden");
+   otp.classList.add("hidden");
+ }else if(type==="lecturer"){
+   label.textContent="Email trường";
+   input.placeholder="Nhập email trường";
+   pw.classList.remove("hidden");
+   otp.classList.add("hidden");
+ }else if(type==="staffadmin"){
+   label.textContent="Email nhân viên / Admin";
+   input.placeholder="Nhập email";
+   pw.classList.remove("hidden");
+   otp.classList.add("hidden");
+ }else{
+   label.textContent="Số điện thoại";
+   input.placeholder="Nhập số điện thoại";
+   pw.classList.add("hidden");
+   otp.classList.remove("hidden");
+ }
+ document.getElementById("loginPassword").required = type!=="guest";
+ document.getElementById("loginOtp").required = type==="guest";
+}
+
+function login(e){
+ e.preventDefault();
+ const id=document.getElementById("loginIdentifier").value.trim();
+
+ if(loginType==="guest"){
+   const otp=document.getElementById("loginOtp").value.trim();
+
+   if(!/^0\d{9}$/.test(id)){
+     showToast("Số điện thoại không hợp lệ!",true);
+     return;
+   }
+
+   if(otp!=="123456"){
+     showToast("OTP không đúng! Demo dùng 123456.",true);
+     return;
+   }
+
+   let u=users.find(x=>x.phone===id&&x.role==="guest");
+
+   if(!u){
+     u={
+       id:nextUserId++,
+       name:"Khách vãng lai",
+       role:"guest",
+       phone:id
+     };
+     users.push(u);
+   }
+
+   currentUser=u;
+ }else{
+   const pass=document.getElementById("loginPassword").value;
+   let u;
+
+   if(loginType==="student"){
+     u=users.find(x=>
+       x.role==="student" &&
+       (x.mssv===id||x.email===id) &&
+       x.password===pass
+     );
+   }
+
+   if(loginType==="lecturer"){
+     u=users.find(x=>
+       x.role==="lecturer" &&
+       x.email===id &&
+       x.password===pass
+     );
+   }
+
+   if(loginType==="staffadmin"){
+     u=users.find(x=>
+       (x.role==="staff" || x.role==="admin") &&
+       x.email===id &&
+       x.password===pass
+     );
+   }
+
+   if(!u){
+     showToast("Thông tin đăng nhập không đúng!",true);
+     return;
+   }
+
+   currentUser=u;
+ }
+
+ localStorage.setItem(
+   "smartCanteenDemoUser",
+   JSON.stringify(currentUser)
+ );
+
+ enterApp();
+}
+
+function showLogin(){
+ document.getElementById("loginPanel").classList.remove("hidden");
+ document.getElementById("registerPanel").classList.add("hidden");
+}
+
+function showRegister(){
+ document.getElementById("loginPanel").classList.add("hidden");
+ document.getElementById("registerPanel").classList.remove("hidden");
+ changeRegisterType();
+}
+
+function changeRegisterType(){
+ const t=document.getElementById("registerType").value;
+
+ document.getElementById("regMssvGroup")
+   .classList.toggle("hidden",t!=="student");
+
+ document.getElementById("regEmailGroup")
+   .classList.toggle("hidden",t==="guest");
+
+ document.getElementById("regPasswordGroup")
+   .classList.toggle("hidden",t==="guest");
+
+ document.getElementById("regMssv").required=t==="student";
+ document.getElementById("regEmail").required=t!=="guest";
+ document.getElementById("regPassword").required=t!=="guest";
+}
+
+function register(e){
+ e.preventDefault();
+
+ const type=document.getElementById("registerType").value;
+ const name=document.getElementById("regName").value.trim();
+ const mssv=document.getElementById("regMssv").value.trim();
+ const email=document.getElementById("regEmail").value.trim();
+ const phone=document.getElementById("regPhone").value.trim();
+ const password=document.getElementById("regPassword").value;
+ const className=document.getElementById("regClass").value.trim();
+
+ if(!name||!phone){
+   showToast("Vui lòng nhập đủ thông tin!",true);
+   return;
+ }
+
+ if(type==="student"&&!mssv){
+   showToast("Sinh viên phải có MSSV!",true);
+   return;
+ }
+
+ if(type!=="guest"&&!email){
+   showToast("Vui lòng nhập email trường!",true);
+   return;
+ }
+
+ if(type==="lecturer"&&!email.endsWith("@truong.edu.vn")){
+   showToast("Giảng viên phải dùng email trường!",true);
+   return;
+ }
+
+ if(type==="student"&&!/^\d{8,12}$/.test(mssv)){
+   showToast("MSSV không hợp lệ!",true);
+   return;
+ }
+
+ if(!/^0\d{9}$/.test(phone)){
+   showToast("Số điện thoại không hợp lệ!",true);
+   return;
+ }
+
+ if(users.some(u=>u.phone===phone)){
+   showToast("Số điện thoại đã được đăng ký!",true);
+   return;
+ }
+
+ if(email&&users.some(u=>u.email===email)){
+   showToast("Email đã được đăng ký!",true);
+   return;
+ }
+
+ pendingRegister={
+   id:nextUserId++,
+   name,
+   role:type,
+   mssv:mssv||"",
+   email:email||"",
+   phone,
+   password,
+   className
+ };
+
+ if(type==="guest"){
+   document.getElementById("registerOtp").value="";
+   document.getElementById("otpOverlay").classList.add("show");
+ }else{
+   finishRegister();
+ }
+}
+
+function verifyRegisterOtp(){
+ if(document.getElementById("registerOtp").value.trim()!=="123456"){
+   showToast("OTP không đúng!",true);
+   return;
+ }
+
+ closeModal("otpOverlay");
+ finishRegister();
+}
+
+function finishRegister(){
+ const u=pendingRegister;
+
+ users.push(u);
+ pendingRegister=null;
+ currentUser=u;
+
+ localStorage.setItem(
+   "smartCanteenDemoUser",
+   JSON.stringify(u)
+ );
+
+ enterApp();
+ showToast("Đăng ký thành công!");
+}
+
+function enterApp(){
+ document.getElementById("authScreen").classList.add("hidden");
+ document.getElementById("mainApp").classList.remove("hidden");
+
+ document.getElementById("headerName").textContent=currentUser.name;
+ document.getElementById("headerRole").textContent=
+   ROLE_INFO[currentUser.role]?.label||currentUser.role;
+
+ document.getElementById("staffHeaderBtn").style.display=
+   ["staff","admin"].includes(currentUser.role)
+   ?"inline-block":"none";
+
+ document.getElementById("adminHeaderBtn").style.display=
+   currentUser.role==="admin"
+   ?"inline-block":"none";
+
+ const d=getDiscount();
+ const b=document.getElementById("discountBanner");
+
+ if(d>0){
+   b.classList.remove("hidden");
+   b.textContent=
+     `🎉 ${ROLE_INFO[currentUser.role].label} được giảm ${d*100}% trên đơn hàng!`;
+ }else{
+   b.classList.add("hidden");
+ }
+
+ renderCategories();
+ renderMenu();
+ renderCart();
+ showHome();
+}
+
+function logout(){
+ currentUser=null;
+ cart=[];
+ localStorage.removeItem("smartCanteenDemoUser");
+ document.getElementById("mainApp").classList.add("hidden");
+ document.getElementById("authScreen").classList.remove("hidden");
+ showLogin();
+}
+
+/* =========================================================
+   MENU + TÌM KIẾM
+========================================================= */
+function renderCategories(){
+ document.getElementById("categories").innerHTML=
+   categories.map(c=>`
+     <button class="cat-btn ${currentCategory===c.id?"active":""}"
+       onclick="filterCategory('${c.id}')">
+       ${c.name}
+     </button>
+   `).join("");
+}
+
+function filterCategory(c){
+ currentCategory=c;
+ renderCategories();
+ renderMenu();
+}
+
+function clearSearch(){
+ document.getElementById("searchInput").value="";
+ renderMenu();
+}
+
+function renderMenu(){
+ const q=(document.getElementById("searchInput")?.value||"")
+   .toLowerCase().trim();
+
+ let list=menuData.filter(x=>
+   currentCategory==="all"||x.category===currentCategory
+ );
+
+ if(q){
+   list=list.filter(x=>
+     (x.name+" "+x.desc+" "+x.ingredients)
+       .toLowerCase()
+       .includes(q)
+   );
+ }
+
+ document.getElementById("menuResultCount").textContent=
+   `${list.length} món`;
+
+ document.getElementById("menuGrid").innerHTML=
+ list.length
+ ?list.map(item=>{
+   const p=priceFor(item);
+   const has=p<item.price;
+
+   return `
+   <article class="menu-card">
+     <div class="food-img">
+       ${item.emoji}
+       ${item.badge?`<span class="food-badge">${escapeHtml(item.badge)}</span>`:""}
+       ${!item.available?`<span class="out-badge">Hết món</span>`:""}
+     </div>
+     <div class="food-body">
+       <div class="food-name">${escapeHtml(item.name)}</div>
+       <div class="food-desc">${escapeHtml(item.desc)}</div>
+       <div style="font-size:12px;color:var(--muted);margin-bottom:10px">
+         🥬 ${escapeHtml(item.ingredients)}
+       </div>
+       <div class="food-bottom">
+         <div class="price">
+           ${has?`<span class="old-price">${formatPrice(item.price)}</span>`:""}
+           ${formatPrice(p)}
+         </div>
+         <div style="display:flex;gap:6px">
+           <button class="btn btn-secondary" style="padding:7px 10px"
+             onclick="openFoodDetail(${item.id})">Xem</button>
+           <button class="add-circle"
+             onclick="addToCart(${item.id})"
+             ${!item.available?"disabled":""}>+</button>
+         </div>
+       </div>
+     </div>
+   </article>`;
+ }).join("")
+ :`<div class="empty" style="grid-column:1/-1">Không tìm thấy món phù hợp.</div>`;
+}
+
+function openFoodDetail(id){
+ const item=menuData.find(x=>x.id===id);
+ if(!item)return;
+
+ document.getElementById("foodDetail").innerHTML=`
+ <div class="product-detail">
+   <div class="detail-image">${item.emoji}</div>
+   <div>
+     <h2>${escapeHtml(item.name)}</h2>
+     <p style="color:var(--muted);margin:8px 0">
+       ${escapeHtml(item.desc)}
+     </p>
+     <div class="price">${formatPrice(priceFor(item))}</div>
+     <p style="margin-top:12px">
+       <b>Thành phần:</b> ${escapeHtml(item.ingredients)}
+     </p>
+     <p style="margin-top:8px">
+       <b>Tình trạng:</b> ${item.available?"Còn món":"Hết món"}
+     </p>
+     <div class="form-group" style="margin-top:14px">
+       <label>Ghi chú món</label>
+       <textarea id="detailNote" rows="3"
+         placeholder="Không hành, ít cay..."></textarea>
+     </div>
+     <div style="display:flex;gap:10px;align-items:center">
+       <button class="qty-btn" onclick="detailQty(-1)">−</button>
+       <b id="detailQty">1</b>
+       <button class="qty-btn" onclick="detailQty(1)">+</button>
+       <button class="btn btn-primary" style="flex:1"
+         onclick="addDetailToCart(${id})"
+         ${!item.available?"disabled":""}>
+         Thêm vào giỏ
+       </button>
+     </div>
+   </div>
+ </div>`;
+
+ document.getElementById("foodDetailOverlay").dataset.item=id;
+ document.getElementById("foodDetailOverlay").dataset.qty=1;
+ document.getElementById("foodDetailOverlay").classList.add("show");
+}
+
+function detailQty(d){
+ const o=document.getElementById("foodDetailOverlay");
+ let q=Number(o.dataset.qty||1)+d;
+ q=Math.max(1,q);
+ o.dataset.qty=q;
+ document.getElementById("detailQty").textContent=q;
+}
+
+function addDetailToCart(id){
+ const q=Number(
+   document.getElementById("foodDetailOverlay").dataset.qty||1
+ );
+ const note=document.getElementById("detailNote").value.trim();
+
+ for(let i=0;i<q;i++){
+   addToCart(id,note,false);
+ }
+
+ closeModal("foodDetailOverlay");
+ renderCart();
+ showToast("Đã thêm món vào giỏ!");
+}
+
+function addToCart(id,note="",notify=true){
+ const item=menuData.find(x=>x.id===id);
+ if(!item||!item.available)return;
+
+ const found=cart.find(x=>x.id===id&&x.note===note);
+
+ if(found){
+   found.qty++;
+ }else{
+   cart.push({
+     id:item.id,
+     name:item.name,
+     emoji:item.emoji,
+     price:item.price,
+     finalPrice:priceFor(item),
+     qty:1,
+     note
+   });
+ }
+
+ renderCart();
+
+ if(notify){
+   showToast(`Đã thêm ${item.name}`);
+ }
+}
+
+function changeQty(index,d){
+ if(!cart[index])return;
+
+ cart[index].qty+=d;
+
+ if(cart[index].qty<=0){
+   cart.splice(index,1);
+ }
+
+ renderCart();
+}
+
+function removeCart(index){
+ cart.splice(index,1);
+ renderCart();
+}
+
+function renderCart(){
+ const c=document.getElementById("cartItems");
+ const count=document.getElementById("cartCount");
+
+ const qty=cart.reduce((s,x)=>s+x.qty,0);
+ count.textContent=qty+" món";
+
+ if(!cart.length){
+   c.innerHTML=
+     '<div class="empty" style="padding:20px">Giỏ hàng đang trống.</div>';
+   document.getElementById("checkoutBtn").disabled=true;
+   updateTotals();
+   return;
+ }
+
+ c.innerHTML=cart.map((x,i)=>`
+ <div class="cart-item">
+   <div class="cart-item-top">
+     <b>${x.emoji} ${escapeHtml(x.name)}</b>
+     <span>${formatPrice(x.finalPrice*x.qty)}</span>
+   </div>
+   ${x.note?`<div class="note-small">Ghi chú: ${escapeHtml(x.note)}</div>`:""}
+   <div class="qty">
+     <button onclick="changeQty(${i},-1)">−</button>
+     <b>${x.qty}</b>
+     <button onclick="changeQty(${i},1)">+</button>
+     <button style="margin-left:auto;border:0;background:none;color:var(--danger)"
+       onclick="removeCart(${i})">Xóa</button>
+   </div>
+ </div>`).join("");
+
+ document.getElementById("checkoutBtn").disabled=false;
+ updateTotals();
+}
+
+function updateTotals(){
+ const sub=cart.reduce((s,x)=>s+x.price*x.qty,0);
+ const total=cart.reduce((s,x)=>s+x.finalPrice*x.qty,0);
+ const discount=sub-total;
+
+ document.getElementById("subtotal").textContent=formatPrice(sub);
+ document.getElementById("discountAmount").textContent="-"+formatPrice(discount);
+ document.getElementById("total").textContent=formatPrice(total);
+
+ document.getElementById("discountRow").style.display=
+   discount>0?"flex":"none";
+}
+
+/* =========================================================
+   CHECKOUT
+========================================================= */
+function openCheckout(){
+ if(!cart.length){
+   showToast("Giỏ hàng đang trống!",true);
+   return;
+ }
+
+ selectedSlot="";
+
+ document.getElementById("orderNote").value="";
+ document.getElementById("checkoutStep1").classList.remove("hidden");
+ document.getElementById("checkoutStep2").classList.add("hidden");
+ document.getElementById("checkoutSuccess").classList.add("hidden");
+
+ renderCheckoutItems();
+ renderSlots();
+
+ document.getElementById("checkoutOverlay").classList.add("show");
+}
+
+function renderCheckoutItems(){
+ document.getElementById("checkoutItems").innerHTML=
+   cart.map(x=>`
+   <div class="order-item-row">
+     <span>
+       ${x.emoji} ${escapeHtml(x.name)} × ${x.qty}
+       ${x.note?` <small>(${escapeHtml(x.note)})</small>`:""}
+     </span>
+     <b>${formatPrice(x.finalPrice*x.qty)}</b>
+   </div>
+   `).join("")+
+   `<div class="summary-row total-row">
+      <span>Tổng</span>
+      <span>${formatPrice(cart.reduce((s,x)=>s+x.finalPrice*x.qty,0))}</span>
+   </div>`;
+}
+
+function renderSlots(){
+ const slots=[];
+
+ for(let h=10;h<22;h++){
+   slots.push(
+     String(h).padStart(2,"0")+":00 – "+
+     String(h).padStart(2,"0")+":15"
+   );
+ }
+
+ document.getElementById("slotGrid").innerHTML=
+   slots.map(s=>`
+     <button class="slot ${selectedSlot===s?"selected":""}"
+       onclick="selectSlot('${s}')">${s}</button>
+   `).join("");
+}
+
+function selectSlot(s){
+ selectedSlot=s;
+ renderSlots();
+}
+
+function continueToPayment(){
+ if(!selectedSlot){
+   showToast("Hãy chọn khung giờ nhận hàng!",true);
+   return;
+ }
+
+ const code=makePickupCode(currentUser);
+
+ document.getElementById("generatedPickupCode").textContent=code;
+ document.getElementById("checkoutStep1").classList.add("hidden");
+ document.getElementById("checkoutStep2").classList.remove("hidden");
+
+ selectPayment("momo");
+}
+
+function backToStep1(){
+ document.getElementById("checkoutStep2").classList.add("hidden");
+ document.getElementById("checkoutStep1").classList.remove("hidden");
+}
+
+function selectPayment(type){
+ selectedPayment=type;
+
+ document.getElementById("momoOption")
+   .classList.toggle("selected",type==="momo");
+
+ document.getElementById("qrOption")
+   .classList.toggle("selected",type==="qr");
+
+ const total=cart.reduce(
+   (s,x)=>s+x.finalPrice*x.qty,0
+ );
+
+ if(type==="momo"){
+   document.getElementById("paymentBox").innerHTML=`
+     <div class="info-box">
+       <b>Ví MoMo - Demo</b><br>
+       Số tiền: <b>${formatPrice(total)}</b><br>
+       Nhấn xác nhận để mô phỏng giao dịch thành công.
+     </div>`;
+ }else{
+   document.getElementById("paymentBox").innerHTML=`
+     <div style="text-align:center">
+       <div class="qr">▦</div>
+       <b>SMART CANTEEN</b>
+       <p>Ngân hàng: DEMO BANK<br>
+       Số tài khoản: 123456789<br>
+       Nội dung: ${makePickupCode(currentUser)}</p>
+       <p style="color:var(--muted)">
+         QR chuyển khoản demo - không giao dịch thật.
+       </p>
+     </div>`;
+ }
+}
+
+function finishPayment(){
+ if(!selectedSlot){
+   showToast("Chưa chọn khung giờ!",true);
+   return;
+ }
+
+ const total=cart.reduce((s,x)=>s+x.finalPrice*x.qty,0);
+
+ const order={
+   id:nextOrderId++,
+   code:makePickupCode(currentUser),
+   userId:currentUser.id,
+   customer:currentUser.name,
+   role:currentUser.role,
+   phone:currentUser.phone||"",
+   pickupSlot:selectedSlot,
+   paymentMethod:selectedPayment==="momo"?"Ví MoMo":"QR chuyển khoản",
+   paymentStatus:"Đã thanh toán (demo)",
+   status:"Chờ xác nhận",
+   items:cart.map(x=>({...x})),
+   total,
+   note:document.getElementById("orderNote").value.trim(),
+   createdAt:new Date().toLocaleString("vi-VN"),
+   cancelDeadline:Date.now()+5*60*1000,
+   rejectReason:""
+ };
+
+ orders.unshift(order);
+ cart=[];
+ renderCart();
+
+ document.getElementById("checkoutStep2").classList.add("hidden");
+ document.getElementById("checkoutSuccess").classList.remove("hidden");
+
+ document.getElementById("checkoutSuccess").innerHTML=`
+   <div style="text-align:center;padding:15px">
+     <div style="font-size:60px">✅</div>
+     <h2>Đặt món thành công!</h2>
+     <p style="color:var(--muted);margin:8px 0">
+       Đơn #${order.id} đã được gửi đến nhân viên.
+     </p>
+     <div class="pickup-code">${order.code}</div>
+     <p><b>Khung giờ:</b> ${order.pickupSlot}</p>
+     <p><b>Thanh toán:</b> ${order.paymentMethod}</p>
+     <button class="btn btn-primary" style="margin-top:15px"
+       onclick="closeModal('checkoutOverlay');showOrders()">
+       Theo dõi đơn hàng
+     </button>
+   </div>`;
+
+ showToast("Thanh toán và đặt món thành công!");
+}
+
+/* =========================================================
+   ĐƠN HÀNG
+========================================================= */
+function showHome(){
+ showOnly("homePage");
+ renderMenu();
+ renderCart();
+}
+
+function showOrders(){
+ showOnly("ordersPage");
+ renderOrders();
+}
+
+function orderTimeline(status){
+ const states=["Chờ xác nhận","Đã xác nhận","Đang chuẩn bị","Sẵn sàng nhận","Đã nhận"];
+ const index=states.indexOf(status);
+
+ if(index<0)return "";
+
+ return `
+ <div class="timeline">
+ ${states.map((s,i)=>`
+   <div class="timeline-step ${i<=index?"done":""}">
+     <div class="timeline-dot"></div>${s}
+   </div>
+ `).join("")}
+ </div>`;
+}
+
+function renderOrders(){
+ const mine=orders.filter(o=>o.userId===currentUser.id);
+ const el=document.getElementById("myOrders");
+
+ if(!mine.length){
+   el.innerHTML='<div class="card empty">Bạn chưa có đơn hàng nào.</div>';
+   return;
+ }
+
+ el.innerHTML=mine.map(o=>`
+ <div class="order-card">
+   <div class="order-head">
+     <div>
+       <div class="order-code">#${o.id} • ${o.code}</div>
+       <small>${o.createdAt}</small>
+     </div>
+     <span class="status ${statusClass(o.status)}">${o.status}</span>
+   </div>
+
+   ${["Chờ xác nhận","Đã xác nhận","Đang chuẩn bị","Sẵn sàng nhận","Đã nhận"].includes(o.status)?orderTimeline(o.status):""}
+
+   <div class="order-items">
+     ${o.items.map(i=>`
+       <div class="order-item-row">
+         <span>${i.emoji} ${escapeHtml(i.name)} × ${i.qty}</span>
+         <b>${formatPrice(i.finalPrice*i.qty)}</b>
+       </div>
+     `).join("")}
+   </div>
+
+   <div class="form-grid">
+     <div><b>⏰ Nhận hàng:</b><br>${o.pickupSlot}</div>
+     <div><b>💳 Thanh toán:</b><br>${o.paymentMethod}<br><small>${o.paymentStatus}</small></div>
+     <div><b>💰 Tổng:</b><br>${formatPrice(o.total)}</div>
+     <div><b>🎫 Mã nhận:</b><br><strong style="color:var(--primary);font-size:20px">${o.code}</strong></div>
+   </div>
+
+   ${o.note?`<p style="margin-top:8px"><b>Ghi chú:</b> ${escapeHtml(o.note)}</p>`:""}
+
+   ${o.rejectReason?`
+   <div class="info-box" style="margin-top:10px;background:#fff0f0;border-color:var(--danger)">
+     <b>Lý do từ chối:</b> ${escapeHtml(o.rejectReason)}
+   </div>`:""}
+
+   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+     ${o.status==="Chờ xác nhận"&&Date.now()<o.cancelDeadline?
+       `<button class="btn btn-danger" onclick="cancelOrder(${o.id})">Hủy đơn trong 5 phút</button>`:""}
+
+     ${o.status==="Đã nhận"&&!reviews.some(r=>r.orderId===o.id)?
+       `<button class="btn btn-warning" onclick="openReview(${o.id})">⭐ Đánh giá</button>`:""}
+   </div>
+ </div>
+ `).join("");
+}
+
+function cancelOrder(id){
+ const o=orders.find(x=>x.id===id);
+ if(!o)return;
+
+ if(Date.now()>o.cancelDeadline){
+   showToast("Đã quá 5 phút, không thể hủy!",true);
+   return;
+ }
+
+ o.status="Đã hủy";
+ renderOrders();
+ showToast("Đã hủy đơn hàng.");
+}
+
+/* =========================================================
+   NHÂN VIÊN
+========================================================= */
+function isStaff(){
+ return currentUser &&
+   (currentUser.role==="staff"||currentUser.role==="admin");
+}
+
+function showStaff(){
+ if(!isStaff()){
+   showToast("Bạn không có quyền!",true);
+   return;
+ }
+ showOnly("staffPage");
+ renderStaff();
+}
+
+function renderStaff(){
+ const waiting=orders.filter(o=>o.status==="Chờ xác nhận").length;
+ const preparing=orders.filter(o=>["Đã xác nhận","Đang chuẩn bị"].includes(o.status)).length;
+ const ready=orders.filter(o=>o.status==="Sẵn sàng nhận").length;
+ const low=ingredients.filter(i=>i.qty<=i.min).length;
+
+ document.getElementById("staffStats").innerHTML=`
+ <div class="stat"><div class="label">Đơn chờ xác nhận</div><div class="value">${waiting}</div></div>
+ <div class="stat"><div class="label">Đang chuẩn bị</div><div class="value">${preparing}</div></div>
+ <div class="stat"><div class="label">Chờ khách nhận</div><div class="value">${ready}</div></div>
+ <div class="stat"><div class="label">Nguyên liệu thấp</div><div class="value">${low}</div></div>`;
+
+ const list=orders.filter(o=>
+   ["Chờ xác nhận","Đã xác nhận","Đang chuẩn bị","Sẵn sàng nhận"].includes(o.status)
+ );
+
+ document.getElementById("staffOrders").innerHTML=
+ list.length
+ ?list.map(o=>`
+ <div class="order-card">
+  <div class="order-head">
+    <div><div class="order-code">#${o.id} • ${o.code}</div><small>${o.createdAt}</small></div>
+    <span class="status ${statusClass(o.status)}">${o.status}</span>
+  </div>
+
+  <p style="margin-top:8px">
+    <b>Khách:</b> ${escapeHtml(o.customer)}
+    (${ROLE_INFO[o.role]?.label||o.role})
+  </p>
+
+  <p><b>⏰ Nhận:</b> ${o.pickupSlot} • <b>💳</b> ${o.paymentMethod}</p>
+
+  <div class="order-items">
+    ${o.items.map(i=>`
+      <div class="order-item-row">
+        <span>
+          ${i.emoji} ${escapeHtml(i.name)} × ${i.qty}
+          ${i.note?`<small> – ${escapeHtml(i.note)}</small>`:""}
+        </span>
+        <b>${formatPrice(i.finalPrice*i.qty)}</b>
+      </div>
+    `).join("")}
+  </div>
+
+  <p><b>Tổng:</b> ${formatPrice(o.total)}</p>
+
+  ${o.status==="Chờ xác nhận"?`
+   <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+     <button class="btn btn-success" onclick="acceptOrder(${o.id})">
+       ✅ Đủ nguyên liệu – Nhận đơn
+     </button>
+     <button class="btn btn-danger" onclick="openReject(${o.id})">
+       ❌ Không đủ – Hủy
+     </button>
+   </div>`:""}
+
+  ${o.status==="Đã xác nhận"?`
+   <button class="btn btn-primary" style="margin-top:10px"
+     onclick="updateOrderStatus(${o.id},'Đang chuẩn bị')">
+     🍳 Bắt đầu chuẩn bị
+   </button>`:""}
+
+  ${o.status==="Đang chuẩn bị"?`
+   <button class="btn btn-success" style="margin-top:10px"
+     onclick="updateOrderStatus(${o.id},'Sẵn sàng nhận')">
+     📦 Đã chuẩn bị xong
+   </button>`:""}
+
+  ${o.status==="Sẵn sàng nhận"?`
+   <button class="btn btn-dark" style="margin-top:10px"
+     onclick="openPickup(${o.id})">
+     🎫 Xác nhận khách nhận món
+   </button>`:""}
+ </div>
+ `).join("")
+ :`<div class="empty">Không có đơn cần xử lý.</div>`;
+
+ renderStaffIngredients();
+}
+
+function renderStaffIngredients(){
+ document.getElementById("staffIngredients").innerHTML=
+ ingredients.map(i=>{
+   const s=i.qty<=0?"stock-out":i.qty<=i.min?"stock-low":"stock-ok";
+   const t=i.qty<=0?"Hết":i.qty<=i.min?"Sắp hết":"Đủ";
+
+   return `
+   <div style="padding:9px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:8px">
+     <span>
+       <b>${escapeHtml(i.name)}</b><br>
+       <small>Cập nhật: ${i.lastUpdate}</small>
+     </span>
+     <span>
+       <b>${i.qty} ${i.unit}</b><br>
+       <span class="ingredient-status ${s}">${t}</span>
+     </span>
+   </div>`;
+ }).join("");
+}
+
+function hasEnoughIngredients(order){
+ /*
+   Demo kiểm tra đơn giản.
+   Bản thật sẽ đối chiếu OrderItems với
+   MenuItemIngredients và Ingredients trong SQL Server.
+ */
+ return !order.items.some(item=>
+   item.name.toLowerCase().includes("bò") &&
+   ingredients.find(i=>i.name==="Thịt bò"&&i.qty<=0)
+ );
+}
+
+function acceptOrder(id){
+ const o=orders.find(x=>x.id===id);
+ if(!o)return;
+
+ if(!hasEnoughIngredients(o)){
+   showToast("Không đủ nguyên liệu. Hãy từ chối đơn kèm lý do.",true);
+   return;
+ }
+
+ o.status="Đã xác nhận";
+ showToast("Đã nhận đơn và chuyển sang chuẩn bị.");
+ renderStaff();
+}
+
+function updateOrderStatus(id,status){
+ const o=orders.find(x=>x.id===id);
+ if(!o)return;
+
+ o.status=status;
+ renderStaff();
+ showToast("Đã cập nhật trạng thái.");
+}
+
+function openReject(id){
+ rejectingOrderId=id;
+ document.getElementById("rejectReason").value="";
+ document.getElementById("rejectOverlay").classList.add("show");
+}
+
+function confirmReject(){
+ const reason=document.getElementById("rejectReason").value.trim();
+
+ if(!reason){
+   showToast("Phải nhập lý do!",true);
+   return;
+ }
+
+ const o=orders.find(x=>x.id===rejectingOrderId);
+
+ if(o){
+   o.status="Đã từ chối";
+   o.rejectReason=reason;
+ }
+
+ closeModal("rejectOverlay");
+ renderStaff();
+ showToast("Đã từ chối đơn hàng.");
+}
+
+function openPickup(id){
+ pickupOrderId=id;
+ document.getElementById("pickupInput").value="";
+ document.getElementById("pickupOverlay").classList.add("show");
+}
+
+function verifyPickup(){
+ const code=document.getElementById("pickupInput")
+   .value.trim().toUpperCase();
+
+ const o=orders.find(x=>x.id===pickupOrderId);
+ if(!o)return;
+
+ if(code!==o.code){
+   showToast("Mã nhận hàng không đúng!",true);
+   return;
+ }
+
+ o.status="Đã nhận";
+ closeModal("pickupOverlay");
+ renderStaff();
+ showToast("Xác nhận giao món thành công.");
+}
+
+function openIngredientUpdate(){
+ document.getElementById("ingredientUpdateForm").innerHTML=`
+ <div class="table-wrap">
+ <table class="data-table">
+ <thead>
+   <tr><th>Nguyên liệu</th><th>Hiện tại</th><th>Tối thiểu</th><th>Cập nhật</th></tr>
+ </thead>
+ <tbody>
+ ${ingredients.map(i=>`
+   <tr>
+     <td>${escapeHtml(i.name)}</td>
+     <td>${i.qty} ${i.unit}</td>
+     <td>${i.min} ${i.unit}</td>
+     <td><input type="number" step="0.1" id="ing_${i.id}" value="${i.qty}"></td>
+   </tr>
+ `).join("")}
+ </tbody>
+ </table>
+ </div>`;
+
+ document.getElementById("ingredientOverlay").classList.add("show");
+}
+
+function saveIngredientUpdate(){
+ const now=new Date().toLocaleString("vi-VN");
+
+ ingredients.forEach(i=>{
+   const v=Number(
+     document.getElementById("ing_"+i.id).value
+   );
+
+   if(!isNaN(v)&&v>=0){
+     i.qty=v;
+   }
+
+   i.lastUpdate=now;
+ });
+
+ closeModal("ingredientOverlay");
+ renderStaff();
+ showToast("Đã cập nhật nguyên liệu. Chu kỳ tiếp theo: 1 giờ.");
+}
+
+/* =========================================================
+   ADMIN
+========================================================= */
+function showAdmin(){
+ if(currentUser.role!=="admin"){
+   showToast("Chỉ Admin mới có quyền!",true);
+   return;
+ }
+
+ showOnly("adminPage");
+ adminTab("foods",document.querySelector(".admin-nav button"));
+}
+
+function adminTab(tab,btn){
+ document.querySelectorAll(".admin-nav button")
+   .forEach(x=>x.classList.remove("active"));
+
+ if(btn)btn.classList.add("active");
+
+ if(tab==="foods")renderAdminFoods();
+ if(tab==="ingredients")renderAdminIngredients();
+ if(tab==="reports")renderAdminReports();
+ if(tab==="promotions")renderAdminPromotions();
+ if(tab==="reviews")renderAdminReviews();
+}
+
+function renderAdminFoods(){
+ document.getElementById("adminContent").innerHTML=`
+ <div class="card">
+  <div class="section-title" style="margin-top:0">
+    <h2>Quản lý món ăn</h2>
+    <button class="btn btn-primary" onclick="openFoodAdmin()">+ Thêm món</button>
+  </div>
+
+  <div class="table-wrap">
+  <table class="data-table">
+   <thead><tr>
+    <th>Món</th><th>Danh mục</th><th>Giá</th><th>Trạng thái</th><th>Thao tác</th>
+   </tr></thead>
+   <tbody>
+   ${menuData.map(i=>`
+    <tr>
+      <td>${i.emoji} <b>${escapeHtml(i.name)}</b><br><small>${escapeHtml(i.ingredients)}</small></td>
+      <td>${categories.find(c=>c.id===i.category)?.name||i.category}</td>
+      <td>${formatPrice(i.price)}</td>
+      <td>${i.available?"Còn":"Hết"}</td>
+      <td>
+        <button class="btn btn-secondary" onclick="openFoodAdmin(${i.id})">Sửa</button>
+        <button class="btn btn-danger" onclick="deleteFood(${i.id})">Xóa</button>
+      </td>
+    </tr>
+   `).join("")}
+   </tbody>
+  </table>
+  </div>
+ </div>`;
+}
+
+function openFoodAdmin(id=null){
+ const item=id?menuData.find(x=>x.id===id):null;
+
+ let ov=document.getElementById("foodAdminOverlay");
+
+ if(!ov){
+   ov=document.createElement("div");
+   ov.id="foodAdminOverlay";
+   ov.className="overlay";
+   document.body.appendChild(ov);
+ }
+
+ ov.innerHTML=`
+ <div class="modal large">
+   <div class="modal-head">
+     <h2>${item?"Sửa món":"Thêm món"}</h2>
+     <button class="close" onclick="closeModal('foodAdminOverlay')">×</button>
+   </div>
+
+   <input type="hidden" id="adminFoodId" value="${item?.id||""}">
+
+   <div class="form-grid">
+     <div class="form-group full">
+       <label>Tên món *</label>
+       <input id="adminFoodName" value="${escapeHtml(item?.name||"")}">
+     </div>
+
+     <div class="form-group">
+       <label>Giá *</label>
+       <input type="number" id="adminFoodPrice" value="${item?.price||0}">
+     </div>
+
+     <div class="form-group">
+       <label>Danh mục</label>
+       <select id="adminFoodCategory">
+         ${categories.filter(c=>c.id!=="all").map(c=>`
+           <option value="${c.id}" ${item?.category===c.id?"selected":""}>${c.name}</option>
+         `).join("")}
+       </select>
+     </div>
+
+     <div class="form-group full">
+       <label>Mô tả</label>
+       <textarea id="adminFoodDesc">${escapeHtml(item?.desc||"")}</textarea>
+     </div>
+
+     <div class="form-group full">
+       <label>Thành phần / nguyên liệu</label>
+       <textarea id="adminFoodIng">${escapeHtml(item?.ingredients||"")}</textarea>
+     </div>
+
+     <div class="form-group">
+       <label>Emoji</label>
+       <input id="adminFoodEmoji" value="${escapeHtml(item?.emoji||"🍽️")}">
+     </div>
+
+     <div class="form-group">
+       <label>Nhãn</label>
+       <input id="adminFoodBadge" value="${escapeHtml(item?.badge||"")}">
+     </div>
+
+     <div class="form-group full">
+       <label>
+         <input type="checkbox" id="adminFoodAvailable" style="width:auto"
+           ${item?.available!==false?"checked":""}>
+         Đang bán
+       </label>
+     </div>
+   </div>
+
+   <button class="btn btn-primary" style="width:100%" onclick="saveFoodAdmin()">
+     Lưu món
+   </button>
+ </div>`;
+
+ ov.classList.add("show");
+}
+
+function saveFoodAdmin(){
+ const id=Number(document.getElementById("adminFoodId").value);
+
+ const data={
+   name:document.getElementById("adminFoodName").value.trim(),
+   price:Number(document.getElementById("adminFoodPrice").value),
+   category:document.getElementById("adminFoodCategory").value,
+   desc:document.getElementById("adminFoodDesc").value.trim(),
+   ingredients:document.getElementById("adminFoodIng").value.trim(),
+   emoji:document.getElementById("adminFoodEmoji").value.trim()||"🍽️",
+   badge:document.getElementById("adminFoodBadge").value.trim(),
+   available:document.getElementById("adminFoodAvailable").checked
+ };
+
+ if(!data.name||data.price<=0){
+   showToast("Tên và giá món không hợp lệ!",true);
+   return;
+ }
+
+ if(id){
+   Object.assign(menuData.find(x=>x.id===id),data);
+ }else{
+   menuData.push({id:nextMenuId++,...data});
+ }
+
+ document.getElementById("foodAdminOverlay").classList.remove("show");
+ renderAdminFoods();
+ renderMenu();
+ renderCart();
+ showToast("Đã lưu món.");
+}
+
+function deleteFood(id){
+ if(!confirm("Xóa món này?"))return;
+
+ menuData=menuData.filter(x=>x.id!==id);
+ cart=cart.filter(x=>x.id!==id);
+
+ renderAdminFoods();
+ renderMenu();
+ renderCart();
+
+ showToast("Đã xóa món.");
+}
+
+function renderAdminIngredients(){
+ document.getElementById("adminContent").innerHTML=`
+ <div class="card">
+  <div class="section-title" style="margin-top:0">
+    <h2>Quản lý nguyên liệu</h2>
+    <button class="btn btn-primary" onclick="openIngredientUpdate()">Cập nhật 1 giờ/lần</button>
+  </div>
+
+  <div class="info-box">
+    Nhân viên cập nhật số lượng. Admin theo dõi tồn kho và mức tối thiểu.
+  </div>
+
+  <div class="table-wrap">
+  <table class="data-table">
+   <thead><tr>
+     <th>Nguyên liệu</th><th>Số lượng</th><th>Đơn vị</th>
+     <th>Tối thiểu</th><th>Trạng thái</th><th>Lần cập nhật</th>
+   </tr></thead>
+   <tbody>
+   ${ingredients.map(i=>{
+     const s=i.qty<=0?"stock-out":i.qty<=i.min?"stock-low":"stock-ok";
+     return `<tr>
+       <td>${escapeHtml(i.name)}</td>
+       <td>${i.qty}</td>
+       <td>${i.unit}</td>
+       <td>${i.min}</td>
+       <td><span class="ingredient-status ${s}">
+         ${i.qty<=0?"Hết":i.qty<=i.min?"Sắp hết":"Đủ"}
+       </span></td>
+       <td>${i.lastUpdate}</td>
+     </tr>`;
+   }).join("")}
+   </tbody>
+  </table>
+  </div>
+ </div>`;
+}
+
+function renderAdminReports(){
+ const revenue=orders
+   .filter(o=>o.status!=="Đã hủy"&&o.status!=="Đã từ chối")
+   .reduce((s,o)=>s+o.total,0);
+
+ const delivered=orders.filter(o=>o.status==="Đã nhận").length;
+ const pending=orders.filter(o=>o.status==="Chờ xác nhận").length;
+
+ const sold={};
+
+ orders.forEach(o=>{
+   o.items.forEach(i=>{
+     sold[i.name]=(sold[i.name]||0)+i.qty;
+   });
+ });
+
+ const top=Object.entries(sold)
+   .sort((a,b)=>b[1]-a[1])
+   .slice(0,5);
+
+ document.getElementById("adminContent").innerHTML=`
+ <div class="dashboard-grid">
+   <div class="stat"><div class="label">Doanh thu</div><div class="value">${formatPrice(revenue)}</div></div>
+   <div class="stat"><div class="label">Tổng đơn</div><div class="value">${orders.length}</div></div>
+   <div class="stat"><div class="label">Đã nhận</div><div class="value">${delivered}</div></div>
+   <div class="stat"><div class="label">Chờ xác nhận</div><div class="value">${pending}</div></div>
+ </div>
+
+ <div class="card">
+   <h2 style="margin-bottom:12px">🏆 Món bán chạy</h2>
+   ${top.length
+     ?top.map((x,i)=>`
+       <div class="order-item-row">
+         <span>${i+1}. ${escapeHtml(x[0])}</span>
+         <b>${x[1]} phần</b>
+       </div>
+     `).join("")
+     :"<div class='empty'>Chưa có dữ liệu.</div>"}
+ </div>`;
+}
+
+function renderAdminPromotions(){
+ document.getElementById("adminContent").innerHTML=`
+ <div class="card">
+   <div class="section-title" style="margin-top:0">
+     <h2>🎁 Khuyến mãi</h2>
+   </div>
+
+   ${promotions.map(p=>`
+     <div class="order-card">
+       <div class="order-head">
+         <b>${escapeHtml(p.name)}</b>
+         <span class="status ${p.active?"ready":"rejected"}">
+           ${p.active?"Đang áp dụng":"Tắt"}
+         </span>
+       </div>
+       <p>${escapeHtml(p.description)}</p>
+       <b>Giảm ${p.discount}%</b>
+     </div>
+   `).join("")}
+ </div>`;
+}
+
+function renderAdminReviews(){
+ document.getElementById("adminContent").innerHTML=`
+ <div class="card">
+   <h2 style="margin-bottom:12px">⭐ Đánh giá khách hàng</h2>
+
+   ${reviews.length
+     ?reviews.map(r=>`
+       <div class="review">
+         <b>${escapeHtml(r.customer)}</b>
+         <span class="stars">
+           ${"★".repeat(r.stars)}${"☆".repeat(5-r.stars)}
+         </span>
+         <p>${escapeHtml(r.text||"Không có nội dung")}</p>
+         <small>${r.createdAt}</small>
+       </div>
+     `).join("")
+     :"<div class='empty'>Chưa có đánh giá.</div>"}
+ </div>`;
+}
+
+/* =========================================================
+   ĐÁNH GIÁ
+========================================================= */
+function openReview(id){
+ document.getElementById("reviewOrderId").value=id;
+ document.getElementById("reviewText").value="";
+ document.getElementById("reviewOverlay").classList.add("show");
+}
+
+function submitReview(){
+ const id=Number(document.getElementById("reviewOrderId").value);
+
+ reviews.push({
+   id:nextReviewId++,
+   orderId:id,
+   userId:currentUser.id,
+   customer:currentUser.name,
+   stars:Number(document.getElementById("reviewStars").value),
+   text:document.getElementById("reviewText").value.trim(),
+   createdAt:new Date().toLocaleString("vi-VN")
+ });
+
+ closeModal("reviewOverlay");
+ renderOrders();
+ showToast("Cảm ơn bạn đã đánh giá!");
+}
+
+/* =========================================================
+   DEMO DATA: TẠO ĐƠN MẪU CHO NHÂN VIÊN / ADMIN
+========================================================= */
+function createDemoOrders(){
+ if(orders.length)return;
+
+ const student=users.find(u=>u.role==="student");
+
+ orders.push({
+   id:nextOrderId++,
+   code:makePickupCode(student),
+   userId:student.id,
+   customer:student.name,
+   role:"student",
+   phone:student.phone,
+   pickupSlot:"11:00 – 11:15",
+   paymentMethod:"Ví MoMo",
+   paymentStatus:"Đã thanh toán (demo)",
+   status:"Chờ xác nhận",
+   items:[
+     {...menuData[0],qty:1,finalPrice:priceFor(menuData[0]),note:"Ít cay"}
+   ],
+   total:priceFor(menuData[0]),
+   note:"Ít cay",
+   createdAt:new Date().toLocaleString("vi-VN"),
+   cancelDeadline:Date.now()+5*60*1000,
+   rejectReason:""
+ });
+}
+
+/* =========================================================
+   KHỞI TẠO
+========================================================= */
+(function init(){
+ createDemoOrders();
+
+ const saved=localStorage.getItem("smartCanteenDemoUser");
+
+ if(saved){
+   try{
+     currentUser=JSON.parse(saved);
+     if(currentUser)enterApp();
+   }catch(e){
+     console.log("Không thể đọc phiên đăng nhập demo.");
+   }
+ }
+
+ if(!currentUser){
+   document.getElementById("authScreen").classList.remove("hidden");
+   document.getElementById("mainApp").classList.add("hidden");
+ }
+})();
+</script>
+</body>
+</html>
