@@ -31,6 +31,17 @@ test("GET /api/menu trả danh sách món", async () => {
   });
 });
 
+test("GET / tải giao diện và lớp UX enhancement", async () => {
+  await withServer(async (baseUrl) => {
+    const response = await fetch(`${baseUrl}/`);
+    const html = await response.text();
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("content-type") || "", /text\/html/);
+    assert.match(html, /<title>Smart Canteen/);
+    assert.match(html, /\/js\/enhancements\.js/);
+  });
+});
+
 test("HEAD /api/menu chỉ trả header nhưng vẫn thành công", async () => {
   await withServer(async (baseUrl) => {
     const response = await fetch(`${baseUrl}/api/menu`, { method: "HEAD" });
