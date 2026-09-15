@@ -40,8 +40,10 @@ Browser
    ▼
 public/index.html       ← giao diện + nghiệp vụ demo phía trình duyệt
    │
+   ├── public/js/enhancements.js ← UX, responsive, trạng thái rỗng/lỗi
+   │
    ▼
-src/server.js           ← HTTP server Node.js
+src/server.js           ← HTTP server Node.js + phục vụ enhancement
    ├── /api/health       ← health check
    └── /api/menu         ← menu mẫu
         │
@@ -78,6 +80,8 @@ Sau đó mở:
 http://127.0.0.1:3000
 ```
 
+> **Khuyến nghị:** chạy bằng `npm start` để nhận đầy đủ lớp UX enhancement. Mở trực tiếp `public/index.html` vẫn giữ nguyên giao diện prototype gốc.
+
 ### Kiểm tra chất lượng
 
 ```bash
@@ -87,6 +91,18 @@ npm run verify
 ```
 
 GitHub Actions tự động chạy kiểm tra trên Node.js 20 và 22 cho các thay đổi vào `main` hoặc pull request.
+
+## 🎨 UX/UI đã hoàn thiện
+
+Lớp enhancement được phục vụ tự động cùng giao diện và bổ sung:
+- Responsive tốt hơn trên màn hình nhỏ.
+- Focus keyboard rõ ràng cho nút và trường nhập.
+- Loading state cho form gửi dữ liệu.
+- Empty state cho danh sách đơn/thực đơn khi không có dữ liệu.
+- Hỗ trợ phím `Esc` để đóng modal.
+- Xử lý lỗi runtime ở mức giao diện bằng toast khi có thể.
+- Bảng dữ liệu có thể cuộn ngang trên điện thoại.
+- Giữ nguyên nghiệp vụ và HTML prototype hiện có, tránh thay đổi logic demo không cần thiết.
 
 ## 🔌 API demo
 
@@ -100,8 +116,10 @@ GitHub Actions tự động chạy kiểm tra trên Node.js 20 và 22 cho các t
 - [`docs/KIEN_TRUC.md`](docs/KIEN_TRUC.md) — kiến trúc hiện tại và hướng phát triển.
 - [`docs/CHUC_NANG.md`](docs/CHUC_NANG.md) — đặc tả chức năng và luồng nghiệp vụ.
 - [`docs/HUONG_DAN_SU_DUNG.md`](docs/HUONG_DAN_SU_DUNG.md) — hướng dẫn chạy và sử dụng.
+- [`docs/API.md`](docs/API.md) — mô tả API demo.
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — quy trình đóng góp và quy ước commit.
 - [`SECURITY.md`](SECURITY.md) — lưu ý bảo mật.
+- [`CHANGELOG.md`](CHANGELOG.md) — lịch sử thay đổi.
 
 ## 🔐 Lưu ý bảo mật
 
@@ -110,17 +128,19 @@ GitHub Actions tự động chạy kiểm tra trên Node.js 20 và 22 cho các t
 ## 🛠️ Lộ trình hoàn thiện
 
 - [x] Giao diện Smart Canteen và các luồng demo chính.
+- [x] Responsive và UX enhancement cho bản chạy qua Node.js.
 - [x] Node.js HTTP server.
 - [x] API health/menu demo.
-- [x] Kiểm thử tự động cơ bản.
+- [x] Kiểm thử frontend, API và nghiệp vụ mẫu.
 - [x] GitHub Actions CI.
 - [x] Tài liệu chức năng, kiến trúc và hướng dẫn.
-- [ ] Tách CSS/JavaScript khỏi file HTML lớn.
+- [x] EditorConfig và issue templates.
+- [ ] Tách toàn bộ CSS/JavaScript nghiệp vụ khỏi file HTML lớn.
 - [ ] Kết nối cơ sở dữ liệu thật.
 - [ ] Xây dựng API xác thực server-side và session/JWT an toàn.
 - [ ] Kiểm soát tồn kho và slot ở server.
 - [ ] Tích hợp cổng thanh toán thật sau khi đáp ứng yêu cầu bảo mật.
-- [ ] Bổ sung test API, test nghiệp vụ và kiểm thử đồng thời.
+- [ ] Kiểm thử nghiệp vụ nâng cao và kiểm thử đồng thời.
 
 ## 👥 Phạm vi đồ án
 
