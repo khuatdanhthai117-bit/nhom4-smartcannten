@@ -1,13 +1,14 @@
 {
   "name": "smart-canteen",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "Hệ thống đặt món và vận hành căn tin (bản demo có cấu trúc server).",
+  "description": "Hệ thống đặt món trước và quản lý vận hành căn tin, với giao diện Smart Canteen và máy chủ Node.js demo.",
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
-    "check": "node --check src/server.js && node --check src/store.js && node --check src/auth.js",
-    "test": "node --test tests/*.test.js"
+    "check": "node --check src/server.js && node --check src/store.js && node --check src/auth.js && node --check tests/auth.test.js && node --check tests/store.test.js",
+    "test": "node --test tests/*.test.js",
+    "verify": "npm run check && npm test"
   },
   "engines": {
     "node": ">=20"
