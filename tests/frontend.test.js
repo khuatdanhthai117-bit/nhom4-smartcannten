@@ -27,7 +27,7 @@ test('frontend keeps the order workflow states', () => {
 
 test('frontend keeps demo checkout rules', () => {
   assert.match(html, /cancelDeadline:Date\.now\(\)\+5\*60\*1000/);
-  assert.match(html, /pickupCode/);
+  assert.match(html, /makePickupCode\(/);
   assert.match(html, /selectedPayment/);
   assert.match(html, /selectedSlot/);
 });
