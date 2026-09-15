@@ -2,6 +2,21 @@
 
 Các thay đổi đáng chú ý của Smart Canteen.
 
+## 1.3.0 - 2026-09-15
+
+### Cải thiện
+- Bổ sung `public/js/enhancements.js` cho UX/UI khi chạy qua Node.js.
+- Cải thiện responsive trên màn hình nhỏ, bảng dữ liệu, modal và thao tác bằng bàn phím.
+- Bổ sung loading state, empty state và hỗ trợ đóng modal bằng phím `Esc`.
+- Bổ sung xử lý lỗi runtime ở mức giao diện bằng toast khi có thể.
+- Server tự động gắn lớp enhancement vào `index.html` mà không sửa trực tiếp nghiệp vụ prototype.
+- Mở rộng test để xác nhận giao diện được phục vụ kèm enhancement.
+- README được cập nhật để phản ánh chính xác cách chạy và phạm vi dự án.
+
+### Nguyên tắc
+- Không thay đổi trái phép luồng đặt món, giỏ hàng, thanh toán mô phỏng, trạng thái đơn, nguyên liệu, khuyến mãi, đánh giá hoặc các vai trò đã có trong HTML gốc.
+- Các chức năng server-side mới chỉ được bổ sung khi có nhu cầu và phải ghi rõ trong tài liệu.
+
 ## 1.2.0 - 2026-09-15
 
 ### Cải thiện
@@ -11,10 +26,6 @@ Các thay đổi đáng chú ý của Smart Canteen.
 - Bổ sung `.editorconfig` để thống nhất định dạng mã nguồn.
 - Bổ sung template GitHub Issue cho báo lỗi và đề xuất chức năng.
 - Cập nhật tài liệu theo phạm vi hiện tại của đồ án.
-
-### Nguyên tắc
-- Không thay đổi trái phép luồng đặt món, giỏ hàng, thanh toán mô phỏng, trạng thái đơn, nguyên liệu, khuyến mãi, đánh giá hoặc các vai trò đã có trong HTML gốc.
-- Các chức năng server-side mới chỉ được bổ sung khi có nhu cầu và phải ghi rõ trong tài liệu.
 
 ## 1.1.0
 
