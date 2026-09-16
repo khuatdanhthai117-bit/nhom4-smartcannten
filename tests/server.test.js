@@ -18,6 +18,7 @@ test("GET /api/health trả trạng thái hoạt động", async () => {
     const response = await fetch(`${baseUrl}/api/health`);
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { ok: true, service: "smart-canteen" });
+    assert.equal(response.headers.get("cache-control"), "no-store");
   });
 });
 
@@ -28,6 +29,7 @@ test("GET /api/menu trả danh sách món", async () => {
     assert.equal(response.status, 200);
     assert.ok(Array.isArray(data));
     assert.ok(data.length > 0);
+    assert.equal(response.headers.get("cache-control"), "no-store");
   });
 });
 
@@ -39,6 +41,9 @@ test("GET / tải giao diện và lớp UX enhancement", async () => {
     assert.match(response.headers.get("content-type") || "", /text\/html/);
     assert.match(html, /<title>Smart Canteen/);
     assert.match(html, /\/js\/enhancements\.js/);
+    assert.equal(response.headers.get("x-content-type-options"), "nosniff");
+    assert.equal(response.headers.get("x-frame-options"), "DENY");
+    assert.match(response.headers.get("content-security-policy") || "", /default-src 'self'/);
   });
 });
 
