@@ -1,16 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
 
 test('frontend keeps the Smart Canteen core roles', () => {
-  for (const role of ['Sinh viên', 'Giảng viên', 'Khách', 'Nhân viên / Admin']) {
-    assert.match(html, new RegExp(role));
-  }
+  for (const role of ['Sinh viên', 'Giảng viên', 'Khách', 'Nhân viên / Admin']) assert.match(html, new RegExp(role));
 });
 
 test('frontend keeps the main ordering areas', () => {
@@ -20,9 +20,7 @@ test('frontend keeps the main ordering areas', () => {
 });
 
 test('frontend keeps the order workflow states', () => {
-  for (const status of ['waiting', 'confirmed', 'preparing', 'ready', 'received', 'rejected', 'cancelled']) {
-    assert.match(html, new RegExp(`['"]${status}['"]`));
-  }
+  for (const status of ['waiting', 'confirmed', 'preparing', 'ready', 'received', 'rejected', 'cancelled']) assert.match(html, new RegExp(`['"]${status}['"]`));
 });
 
 test('frontend keeps demo checkout rules', () => {
@@ -30,15 +28,42 @@ test('frontend keeps demo checkout rules', () => {
   assert.match(html, /makePickupCode\(/);
   assert.match(html, /selectedPayment/);
   assert.match(html, /selectedSlot/);
+  assert.match(html, /calculateTotals\(\)/);
 });
 
 test('frontend keeps the modal set used by the prototype', () => {
-  for (const id of ['foodModal', 'checkoutModal', 'otpModal', 'ingredientModal', 'rejectModal', 'pickupModal', 'reviewModal']) {
-    assert.match(html, new RegExp(`id=["']${id}["']`));
-  }
+  for (const id of ['foodModal', 'checkoutModal', 'ingredientModal', 'rejectModal', 'pickupModal', 'reviewModal']) assert.match(html, new RegExp(`id=["']${id}["']`));
 });
 
-test('frontend keeps browser demo session storage', () => {
+test('frontend keeps browser demo session and persistent state', () => {
   assert.match(html, /smartCanteenDemoUser/);
-  assert.match(html, /localStorage/);
+  assert.match(html, /smartCanteenState/);
+  assert.match(html, /function persist\(\)/);
+});
+
+test('guest login toggles validation correctly', () => {
+  assert.match(html, /pw\.required=!guest/);
+  assert.match(html, /otp\.required=guest/);
+});
+
+test('staff pickup flow requires the customer code', () => {
+  assert.match(html, /id="pickupCodeInput"/);
+  assert.match(html, /input!==o\.code/);
+});
+
+test('role-based page access is guarded in the frontend', () => {
+  assert.match(html, /const access=\{staff:\["staff","admin"\],admin:\["admin"\]\}/);
+});
+
+test('inline JavaScript is syntactically valid', () => {
+  const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map((m) => m[1]);
+  const script = scripts.join('\n');
+  assert.ok(script.length > 1000);
+  const tempFile = path.join(os.tmpdir(), `smart-canteen-${process.pid}.mjs`);
+  try {
+    fs.writeFileSync(tempFile, script, 'utf8');
+    execFileSync(process.execPath, ['--check', tempFile], { stdio: 'pipe' });
+  } finally {
+    fs.rmSync(tempFile, { force: true });
+  }
 });
