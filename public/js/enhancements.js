@@ -94,12 +94,52 @@
     window.addEventListener("unhandledrejection", () => report("vui lòng thử lại"));
   }
 
+  function fixPromotionDisplay() {
+    const originalApplyDiscount = window.applyDiscount;
+    if (typeof originalApplyDiscount !== "function" || originalApplyDiscount.__smartCanteenPatched) return;
+
+    const patchedApplyDiscount = function () {
+      const input = document.getElementById("discountInput");
+      if (!input || typeof window.calculateTotals !== "function") {
+        return originalApplyDiscount.apply(this, arguments);
+      }
+
+      const code = input.value.trim().toUpperCase();
+      const previous = window.discountCode || "";
+      window.discountCode = code;
+      const totals = window.calculateTotals();
+
+      if (totals.discount) {
+        const subtotal = document.getElementById("checkoutSubtotal");
+        const discount = document.getElementById("checkoutDiscount");
+        const total = document.getElementById("checkoutTotal");
+        if (subtotal) subtotal.textContent = window.formatPrice(totals.sub);
+        if (discount) discount.textContent = `-${window.formatPrice(totals.discount)}`;
+        if (total) total.textContent = window.formatPrice(totals.total);
+        if (typeof window.showToast === "function") window.showToast(`Áp dụng ${totals.discountLabel} thành công.`);
+        return;
+      }
+
+      window.discountCode = previous;
+      const restored = window.calculateTotals();
+      const discount = document.getElementById("checkoutDiscount");
+      const total = document.getElementById("checkoutTotal");
+      if (discount) discount.textContent = restored.discount ? `-${window.formatPrice(restored.discount)}` : "0 ₫";
+      if (total) total.textContent = window.formatPrice(restored.total);
+      if (typeof window.showToast === "function") window.showToast("Mã khuyến mãi không hợp lệ.", true);
+    };
+
+    patchedApplyDiscount.__smartCanteenPatched = true;
+    window.applyDiscount = patchedApplyDiscount;
+  }
+
   function init() {
     addStyles();
     improveButtons();
     bindLoading();
     bindEscape();
     bindRuntimeErrors();
+    fixPromotionDisplay();
     showEmptyStates();
     const observer = new MutationObserver(() => {
       improveButtons();
