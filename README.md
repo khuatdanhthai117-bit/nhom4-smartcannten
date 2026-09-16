@@ -1,66 +1,241 @@
-# 🍱 Smart Canteen
+# 🍱 Smart Canteen — Hệ thống đặt món và quản lý căn tin thông minh
 
 ![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white)
 ![CI](https://github.com/khuatdanhthai117-bit/nhom4-smartcannten/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-academic%20project-blue)
 
-**Smart Canteen** là hệ thống web mô phỏng đặt món trước và quản lý vận hành căn tin. Dự án lấy giao diện Smart Canteen làm nền tảng, đồng thời tổ chức thêm máy chủ Node.js, API demo, kiểm thử và tài liệu để thuận tiện trình bày như một đồ án hoàn chỉnh.
+> **Smart Canteen — Nhóm 4** là đồ án/demo xây dựng hệ thống web hỗ trợ đặt món trước và mô phỏng quy trình vận hành căn tin trong môi trường trường học.
 
-> **Trạng thái:** Academic/Demo — chưa phải hệ thống production.
+## 📌 1. Giới thiệu dự án
 
-## ✨ Chức năng chính
+Trong mô hình căn tin truyền thống, người dùng thường phải xếp hàng, chờ chọn món, thanh toán và chờ nhận đồ ăn. Khi lượng người sử dụng tăng cao vào giờ cao điểm, quá trình này dễ phát sinh tình trạng đông đúc, mất thời gian và khó kiểm soát số lượng đơn hàng.
 
-### 👨‍🎓 Khách hàng
-- Đăng nhập/đăng ký theo vai trò sinh viên, giảng viên hoặc khách.
-- Xem thực đơn, tìm kiếm và lọc theo danh mục.
-- Xem chi tiết món, thêm/sửa/xóa món trong giỏ hàng.
-- Áp dụng khuyến mãi và chọn khung giờ nhận món.
-- Thanh toán mô phỏng bằng các phương thức được giao diện hỗ trợ.
-- Nhận mã lấy món và theo dõi tiến trình đơn hàng.
-- Hủy đơn theo điều kiện của bản demo và đánh giá sau khi nhận món.
+**Smart Canteen** được xây dựng nhằm mô phỏng một quy trình số hóa từ lúc người dùng lựa chọn món đến khi đơn hàng được tiếp nhận, chế biến, hoàn tất và đánh giá. Bên cạnh giao diện dành cho khách hàng, dự án còn mô phỏng các vai trò nhân viên và quản trị viên để thể hiện đầy đủ hơn quy trình vận hành.
 
-### 👨‍🍳 Nhân viên
-- Xem các đơn cần xử lý.
-- Tiếp nhận và cập nhật trạng thái chế biến.
-- Đánh dấu đơn sẵn sàng/đã nhận và xử lý từ chối đơn.
-- Theo dõi nguyên liệu và cập nhật tồn kho mô phỏng.
+Dự án hiện được định hướng là **Academic/Demo**, chưa phải hệ thống production. Những chức năng như OTP, tài khoản thực, thanh toán thật, cơ sở dữ liệu production và kiểm soát tồn kho server-side vẫn nằm trong lộ trình phát triển.
 
-### 👨‍💼 Quản trị viên
+## 🎯 2. Mục tiêu
+
+### 2.1. Mục tiêu tổng quát
+
+Xây dựng một hệ thống web có giao diện trực quan, dễ sử dụng và mô phỏng được quy trình đặt món – xử lý đơn – nhận món trong căn tin.
+
+### 2.2. Mục tiêu cụ thể
+
+- Cho phép người dùng xem và tìm kiếm thực đơn.
+- Hỗ trợ phân loại món ăn và xem thông tin chi tiết.
+- Cho phép thêm, sửa, xóa món trong giỏ hàng.
+- Hỗ trợ chọn khung giờ nhận món và mã khuyến mãi trong phạm vi demo.
+- Mô phỏng thanh toán và sinh mã lấy món.
+- Theo dõi trạng thái đơn hàng theo từng giai đoạn.
+- Mô phỏng nghiệp vụ xử lý đơn cho nhân viên.
+- Mô phỏng quản lý món, nguyên liệu, khuyến mãi, đánh giá và báo cáo cho quản trị viên.
+- Tạo nền tảng có thể mở rộng thành hệ thống sử dụng cơ sở dữ liệu và API xác thực thực tế.
+
+## 👥 3. Đối tượng sử dụng
+
+| Vai trò | Mục đích sử dụng | Chức năng tiêu biểu |
+|---|---|---|
+| Sinh viên | Đặt món tại căn tin | Xem menu, giỏ hàng, đặt món, theo dõi và đánh giá |
+| Giảng viên | Đặt món theo luồng khách hàng | Xem menu, đặt món, theo dõi đơn |
+| Khách | Trải nghiệm bản demo | Xem giao diện và các chức năng được cho phép |
+| Nhân viên | Xử lý đơn hàng | Tiếp nhận, chế biến, cập nhật trạng thái, quản lý nguyên liệu |
+| Quản trị viên | Quản lý và theo dõi hệ thống | Món ăn, tồn kho, khuyến mãi, đánh giá, báo cáo |
+
+## ⭐ 4. Chức năng chính
+
+### 4.1. Chức năng dành cho khách hàng
+
+**Tài khoản và vai trò**
+- Đăng nhập/đăng ký theo vai trò được mô phỏng.
+- Phân biệt luồng sinh viên, giảng viên và khách.
+- Hiển thị giao diện phù hợp với vai trò.
+
+**Thực đơn**
+- Xem danh sách món ăn.
+- Tìm kiếm theo tên.
+- Lọc theo danh mục.
+- Xem thông tin chi tiết món.
+- Theo dõi trạng thái món trong phạm vi dữ liệu demo.
+
+**Giỏ hàng**
+- Thêm món vào giỏ.
+- Tăng/giảm số lượng.
+- Xóa món.
+- Tính tổng giá trị đơn.
+- Kiểm tra lại đơn trước khi xác nhận.
+
+**Đặt món và thanh toán**
+- Chọn khung giờ nhận món.
+- Áp dụng khuyến mãi nếu có.
+- Chọn phương thức thanh toán mô phỏng.
+- Xác nhận đơn.
+- Nhận mã lấy món.
+
+**Theo dõi đơn hàng**
+- Theo dõi quá trình xử lý.
+- Hiển thị trạng thái đơn.
+- Hỗ trợ hủy đơn theo điều kiện của bản demo.
+- Đánh giá sau khi đơn hoàn tất.
+
+### 4.2. Chức năng dành cho nhân viên
+
+- Xem danh sách đơn cần xử lý.
+- Tiếp nhận đơn.
+- Chuyển đơn sang trạng thái đang chuẩn bị.
+- Đánh dấu đơn sẵn sàng.
+- Xác nhận đơn đã được nhận.
+- Từ chối đơn trong trường hợp được mô phỏng cho phép.
+- Theo dõi và cập nhật thông tin nguyên liệu/tồn kho demo.
+
+### 4.3. Chức năng dành cho quản trị viên
+
 - Quản lý món ăn.
-- Quản lý nguyên liệu/tồn kho.
-- Quản lý khuyến mãi.
-- Quản lý đánh giá.
-- Xem báo cáo doanh thu và món bán chạy.
+- Quản lý nguyên liệu và tồn kho.
+- Quản lý chương trình khuyến mãi.
+- Theo dõi và quản lý đánh giá.
+- Xem báo cáo doanh thu mô phỏng.
+- Theo dõi nhóm món bán chạy.
 
-## 🧱 Kiến trúc
+## 🔄 5. Quy trình nghiệp vụ
+
+### 5.1. Quy trình đặt món
 
 ```text
-Browser
-   │
-   ▼
-public/index.html       ← giao diện + nghiệp vụ demo phía trình duyệt
-   │
-   ├── public/js/enhancements.js ← UX, responsive, trạng thái rỗng/lỗi
-   │
-   ▼
-src/server.js           ← HTTP server Node.js + phục vụ enhancement
-   ├── /api/health       ← health check
-   └── /api/menu         ← menu mẫu
-        │
-        ├── src/auth.js  ← kiểm tra quyền / loại bỏ password khỏi dữ liệu trả về
-        └── src/store.js ← dữ liệu mẫu và danh sách vai trò
-
-api/                    ← điểm mở rộng cho API/serverless trong tương lai
-tests/                  ← kiểm thử Node.js
-docs/                   ← đặc tả, kiến trúc, hướng dẫn
+Người dùng
+   ↓
+Đăng nhập / chọn vai trò
+   ↓
+Xem thực đơn
+   ↓
+Tìm kiếm / lọc món
+   ↓
+Chọn món
+   ↓
+Thêm vào giỏ hàng
+   ↓
+Điều chỉnh số lượng
+   ↓
+Chọn khung giờ nhận
+   ↓
+Áp dụng khuyến mãi
+   ↓
+Chọn thanh toán demo
+   ↓
+Xác nhận đơn
+   ↓
+Nhận mã lấy món
+   ↓
+Theo dõi trạng thái
+   ↓
+Nhận món
+   ↓
+Đánh giá
 ```
 
-## 🚀 Chạy dự án
+### 5.2. Quy trình xử lý đơn của nhân viên
 
-### Yêu cầu
+```text
+Chờ xác nhận
+      ↓
+Đang chuẩn bị
+      ↓
+Sẵn sàng
+      ↓
+Đã nhận
+```
 
-- Node.js **20+**
-- Chrome, Edge hoặc Firefox phiên bản hiện đại
+Nhân viên có thể thực hiện các thao tác phù hợp với trạng thái đơn, đồng thời theo dõi nguyên liệu và tình hình vận hành trong phạm vi demo.
+
+### 5.3. Quy trình quản trị
+
+```text
+Quản trị viên
+      ↓
+Dashboard
+      ├── Quản lý món ăn
+      ├── Quản lý nguyên liệu
+      ├── Quản lý khuyến mãi
+      ├── Quản lý đánh giá
+      └── Báo cáo / thống kê
+```
+
+## 🧱 6. Kiến trúc hệ thống
+
+```text
+                         ┌─────────────────────┐
+                         │      Người dùng     │
+                         │ SV / GV / Khách     │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │      Frontend       │
+                         │ public/index.html   │
+                         │ HTML/CSS/JS         │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │    Node.js Server   │
+                         │    src/server.js    │
+                         └──────────┬──────────┘
+                                    │
+                    ┌───────────────┴───────────────┐
+                    ▼                               ▼
+           ┌─────────────────┐             ┌─────────────────┐
+           │   API demo      │             │  Business data  │
+           │ /api/health     │             │ auth / store    │
+           │ /api/menu       │             │ dữ liệu mẫu     │
+           └─────────────────┘             └─────────────────┘
+```
+
+### Các thành phần chính
+
+- **Frontend:** giao diện Smart Canteen và các luồng nghiệp vụ mô phỏng phía trình duyệt.
+- **Enhancement:** bổ sung responsive, UX state, keyboard accessibility và xử lý lỗi giao diện.
+- **Node.js server:** cung cấp máy chủ HTTP đơn giản và phục vụ lớp enhancement.
+- **API demo:** cung cấp health check và menu mẫu.
+- **Auth/store:** chứa logic vai trò và dữ liệu mẫu phục vụ demo.
+- **Docs:** tài liệu đặc tả chức năng, kiến trúc, API và hướng dẫn sử dụng.
+
+## 📁 7. Cấu trúc thư mục
+
+```text
+nhom4-smartcannten/
+├── .github/              # GitHub Actions và issue templates
+├── api/                  # Điểm mở rộng cho API/serverless
+├── docs/                 # Đặc tả, kiến trúc, API, hướng dẫn
+├── public/               # Giao diện và tài nguyên public
+├── src/                  # Node.js server, auth, store, enhancement
+├── .env.example          # Mẫu biến môi trường
+├── .gitignore            # Các file không đưa lên Git
+├── CHANGELOG.md          # Lịch sử thay đổi
+├── CONTRIBUTING.md       # Quy ước đóng góp
+├── README.md             # Tài liệu chính của dự án
+├── SECURITY.md           # Lưu ý bảo mật
+├── index.html            # Điểm vào chuyển hướng tới giao diện public
+└── package.json          # Cấu hình Node.js và scripts
+```
+
+## 🛠️ 8. Công nghệ sử dụng
+
+| Công nghệ | Vai trò |
+|---|---|
+| HTML5 | Xây dựng cấu trúc giao diện |
+| CSS3 | Thiết kế giao diện và responsive |
+| JavaScript | Xử lý tương tác và nghiệp vụ phía trình duyệt |
+| Node.js | Chạy HTTP server và API demo |
+| Git/GitHub | Quản lý mã nguồn và lịch sử thay đổi |
+| GitHub Actions | Tự động kiểm tra chất lượng mã nguồn |
+| Markdown | Viết tài liệu dự án |
+
+## 🚀 9. Cài đặt và chạy dự án
+
+### Yêu cầu môi trường
+
+- Node.js **20 trở lên**.
+- Trình duyệt hiện đại như Chrome, Edge hoặc Firefox.
 
 ### Cài đặt
 
@@ -74,15 +249,17 @@ npm install
 npm start
 ```
 
-Sau đó mở:
+Mở trình duyệt tại:
 
 ```text
 http://127.0.0.1:3000
 ```
 
-> **Khuyến nghị:** chạy bằng `npm start` để nhận đầy đủ lớp UX enhancement. Mở trực tiếp `public/index.html` vẫn giữ nguyên giao diện prototype gốc.
+> Khuyến nghị chạy bằng `npm start` để sử dụng đầy đủ lớp UX enhancement. Mở trực tiếp `public/index.html` vẫn cho phép xem prototype giao diện gốc.
 
-### Kiểm tra chất lượng
+## 🧪 10. Kiểm thử và kiểm soát chất lượng
+
+Các lệnh kiểm tra:
 
 ```bash
 npm run check
@@ -90,30 +267,43 @@ npm test
 npm run verify
 ```
 
-GitHub Actions tự động chạy kiểm tra trên Node.js 20 và 22 cho các thay đổi vào `main` hoặc pull request.
+GitHub Actions được sử dụng để tự động kiểm tra các thay đổi trên môi trường Node.js được cấu hình trong workflow.
 
-## 🎨 UX/UI đã hoàn thiện
+Các nhóm kiểm thử cần quan tâm gồm:
 
-Lớp enhancement được phục vụ tự động cùng giao diện và bổ sung:
-- Responsive tốt hơn trên màn hình nhỏ.
-- Focus keyboard rõ ràng cho nút và trường nhập.
-- Loading state cho form gửi dữ liệu.
-- Empty state cho danh sách đơn/thực đơn khi không có dữ liệu.
-- Hỗ trợ phím `Esc` để đóng modal.
-- Xử lý lỗi runtime ở mức giao diện bằng toast khi có thể.
+- Kiểm tra server khởi động.
+- Kiểm tra endpoint `/api/health`.
+- Kiểm tra endpoint `/api/menu`.
+- Kiểm tra các luồng giao diện chính.
+- Kiểm tra responsive trên màn hình nhỏ.
+- Kiểm tra trạng thái loading/empty/error.
+- Kiểm tra thao tác bàn phím và đóng modal bằng `Esc`.
+
+## 🎨 11. UX/UI
+
+Lớp enhancement hiện có hướng tới việc làm giao diện ổn định và dễ sử dụng hơn, bao gồm:
+
+- Responsive trên màn hình nhỏ.
+- Focus keyboard rõ ràng.
+- Loading state cho form.
+- Empty state cho danh sách.
+- Hỗ trợ phím `Esc` đóng modal.
+- Toast khi xảy ra lỗi runtime ở mức giao diện khi có thể.
 - Bảng dữ liệu có thể cuộn ngang trên điện thoại.
-- Giữ nguyên nghiệp vụ và HTML prototype hiện có, tránh thay đổi logic demo không cần thiết.
+- Giữ nguyên nghiệp vụ và prototype hiện có khi bổ sung enhancement.
 
-## 🔌 API demo
+## 🔌 12. API demo
 
 | Method | Endpoint | Mục đích |
 |---|---|---|
 | GET | `/api/health` | Kiểm tra server đang hoạt động |
 | GET | `/api/menu` | Lấy menu mẫu từ server |
 
-## 📚 Tài liệu
+API hiện mang tính **demo**, chưa phải API production có xác thực, database và kiểm soát giao dịch đầy đủ.
 
-- [`docs/KIEN_TRUC.md`](docs/KIEN_TRUC.md) — kiến trúc hiện tại và hướng phát triển.
+## 📚 13. Tài liệu dự án
+
+- [`docs/KIEN_TRUC.md`](docs/KIEN_TRUC.md) — kiến trúc hệ thống và hướng phát triển.
 - [`docs/CHUC_NANG.md`](docs/CHUC_NANG.md) — đặc tả chức năng và luồng nghiệp vụ.
 - [`docs/HUONG_DAN_SU_DUNG.md`](docs/HUONG_DAN_SU_DUNG.md) — hướng dẫn chạy và sử dụng.
 - [`docs/API.md`](docs/API.md) — mô tả API demo.
@@ -121,32 +311,75 @@ Lớp enhancement được phục vụ tự động cùng giao diện và bổ s
 - [`SECURITY.md`](SECURITY.md) — lưu ý bảo mật.
 - [`CHANGELOG.md`](CHANGELOG.md) — lịch sử thay đổi.
 
-## 🔐 Lưu ý bảo mật
+## 🔐 14. Bảo mật và giới hạn demo
 
-Đây là bản demo. **Không sử dụng dữ liệu thật** cho tài khoản, OTP hoặc thanh toán. Không commit mật khẩu, API key, token, thông tin thẻ hoặc `.env` lên GitHub.
+Đây là dự án học tập/demo. Không sử dụng dữ liệu thật cho:
 
-## 🛠️ Lộ trình hoàn thiện
+- mật khẩu;
+- OTP;
+- token;
+- API key;
+- thông tin thẻ;
+- thông tin thanh toán;
+- dữ liệu cá nhân nhạy cảm.
 
-- [x] Giao diện Smart Canteen và các luồng demo chính.
-- [x] Responsive và UX enhancement cho bản chạy qua Node.js.
-- [x] Node.js HTTP server.
-- [x] API health/menu demo.
-- [x] Kiểm thử frontend, API và nghiệp vụ mẫu.
-- [x] GitHub Actions CI.
-- [x] Tài liệu chức năng, kiến trúc và hướng dẫn.
-- [x] EditorConfig và issue templates.
-- [ ] Tách toàn bộ CSS/JavaScript nghiệp vụ khỏi file HTML lớn.
-- [ ] Kết nối cơ sở dữ liệu thật.
-- [ ] Xây dựng API xác thực server-side và session/JWT an toàn.
-- [ ] Kiểm soát tồn kho và slot ở server.
-- [ ] Tích hợp cổng thanh toán thật sau khi đáp ứng yêu cầu bảo mật.
-- [ ] Kiểm thử nghiệp vụ nâng cao và kiểm thử đồng thời.
+Không commit file `.env` hoặc thông tin bí mật lên repository.
 
-## 👥 Phạm vi đồ án
+## 📈 15. Hướng phát triển
 
-Repository được tổ chức để dễ trình bày source code, chức năng, kiến trúc và quy trình kiểm thử. Các chức năng đang mô phỏng được ghi rõ trong tài liệu, tránh nhầm lẫn giữa prototype và hệ thống triển khai thực tế.
+### Giai đoạn 1 — Hoàn thiện prototype
+
+- Hoàn thiện giao diện.
+- Chuẩn hóa responsive.
+- Hoàn thiện các luồng đặt món và quản lý đơn.
+- Hoàn thiện tài liệu.
+
+### Giai đoạn 2 — Backend thực tế
+
+- Tách nghiệp vụ khỏi HTML lớn.
+- Xây dựng REST API đầy đủ.
+- Thiết kế cơ sở dữ liệu thật.
+- Xây dựng xác thực server-side.
+- Sử dụng session/JWT phù hợp.
+
+### Giai đoạn 3 — Vận hành thông minh
+
+- Kiểm soát tồn kho server-side.
+- Quản lý slot nhận món theo thời gian thực.
+- Đồng bộ trạng thái đơn giữa khách hàng và nhân viên.
+- Thống kê doanh thu theo ngày/tháng.
+- Phân tích món bán chạy.
+
+### Giai đoạn 4 — Tích hợp thực tế
+
+- Tích hợp cổng thanh toán sau khi đáp ứng yêu cầu bảo mật.
+- Thông báo đơn hàng.
+- QR/mã lấy món.
+- Quản lý nhiều căn tin hoặc nhiều điểm nhận.
+- Kiểm thử đồng thời và kiểm thử tải.
+
+## 📊 16. Kết quả đạt được
+
+Dự án đã xây dựng được một nền tảng Smart Canteen có cấu trúc source rõ ràng, giao diện prototype, Node.js server, API demo, các lớp UX enhancement, kiểm thử và tài liệu đi kèm.
+
+Các chức năng được mô phỏng theo quy trình nghiệp vụ của căn tin, giúp nhóm có thể trình bày cả **giao diện, chức năng, kiến trúc, API, kiểm thử và hướng phát triển** thay vì chỉ trình diễn một trang web tĩnh.
+
+## ⚠️ 17. Hạn chế hiện tại
+
+- Dữ liệu nghiệp vụ vẫn mang tính mô phỏng.
+- Chưa có cơ sở dữ liệu production.
+- Xác thực và phân quyền server-side chưa hoàn thiện.
+- Thanh toán chưa kết nối cổng thật.
+- Tồn kho và slot chưa được kiểm soát tập trung trên server.
+- Chưa phải hệ thống triển khai thực tế.
+
+Việc ghi rõ các giới hạn giúp phân biệt chức năng **đã mô phỏng** với chức năng **đã triển khai production**.
+
+## 👨‍💻 18. Phạm vi đồ án
+
+Smart Canteen được tổ chức để phục vụ mục đích học tập, trình bày source code, mô phỏng nghiệp vụ, kiểm thử và bảo vệ đồ án. Repository ưu tiên khả năng đọc hiểu, chạy thử và mở rộng trong các giai đoạn tiếp theo.
 
 ---
 
 **Smart Canteen — Nhóm 4**  
-Academic project / Demo application
+*Academic project / Demo application*
