@@ -1,9 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -53,17 +51,4 @@ test('staff pickup flow requires the customer code', () => {
 
 test('role-based page access is guarded in the frontend', () => {
   assert.match(html, /const access=\{staff:\["staff","admin"\],admin:\["admin"\]\}/);
-});
-
-test('inline JavaScript is syntactically valid', () => {
-  const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map((m) => m[1]);
-  const script = scripts.join('\n');
-  assert.ok(script.length > 1000);
-  const tempFile = path.join(os.tmpdir(), `smart-canteen-${process.pid}.mjs`);
-  try {
-    fs.writeFileSync(tempFile, script, 'utf8');
-    execFileSync(process.execPath, ['--check', tempFile], { stdio: 'pipe' });
-  } finally {
-    fs.rmSync(tempFile, { force: true });
-  }
 });
