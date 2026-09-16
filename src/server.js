@@ -13,15 +13,24 @@ const contentTypes = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
-  ".json": "application/json; charset=utf-8"
+  ".json": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".ico": "image/x-icon"
 };
 
-function send(response, status, body, type = "text/plain; charset=utf-8") {
+function send(response, status, body, type = "text/plain; charset=utf-8", extraHeaders = {}) {
   response.writeHead(status, {
     "Content-Type": type,
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
-    "Referrer-Policy": "no-referrer"
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Content-Security-Policy": "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'",
+    ...extraHeaders
   });
   response.end(body);
 }
@@ -30,7 +39,7 @@ async function prepareHtml(body) {
   const html = body.toString("utf8");
   if (!html.includes("</body>")) return body;
   try {
-    const enhancement = await readFile(enhancementFile, "utf8");
+    await stat(enhancementFile);
     return Buffer.from(html.replace("</body>", `<script src="/js/enhancements.js"></script>\n</body>`), "utf8");
   } catch {
     return body;
@@ -48,12 +57,16 @@ export function createServer() {
 
     if (url.pathname === "/api/health") {
       const body = JSON.stringify({ ok: true, service: "smart-canteen" });
-      return send(response, 200, request.method === "HEAD" ? "" : body, contentTypes[".json"]);
+      return send(response, 200, request.method === "HEAD" ? "" : body, contentTypes[".json"], {
+        "Cache-Control": "no-store"
+      });
     }
 
     if (url.pathname === "/api/menu") {
       const body = JSON.stringify(menu);
-      return send(response, 200, request.method === "HEAD" ? "" : body, contentTypes[".json"]);
+      return send(response, 200, request.method === "HEAD" ? "" : body, contentTypes[".json"], {
+        "Cache-Control": "no-store"
+      });
     }
 
     const requested = url.pathname === "/" ? "/index.html" : url.pathname;
