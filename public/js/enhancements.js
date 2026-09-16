@@ -105,27 +105,27 @@
       }
 
       const code = input.value.trim().toUpperCase();
-      const previous = window.discountCode || "";
-      window.discountCode = code;
-      const totals = window.calculateTotals();
+      const previous = typeof discountCode === "string" ? discountCode : "";
+      discountCode = code;
+      const totals = calculateTotals();
 
       if (totals.discount) {
         const subtotal = document.getElementById("checkoutSubtotal");
         const discount = document.getElementById("checkoutDiscount");
         const total = document.getElementById("checkoutTotal");
-        if (subtotal) subtotal.textContent = window.formatPrice(totals.sub);
-        if (discount) discount.textContent = `-${window.formatPrice(totals.discount)}`;
-        if (total) total.textContent = window.formatPrice(totals.total);
+        if (subtotal) subtotal.textContent = formatPrice(totals.sub);
+        if (discount) discount.textContent = `-${formatPrice(totals.discount)}`;
+        if (total) total.textContent = formatPrice(totals.total);
         if (typeof window.showToast === "function") window.showToast(`Áp dụng ${totals.discountLabel} thành công.`);
         return;
       }
 
-      window.discountCode = previous;
-      const restored = window.calculateTotals();
+      discountCode = previous;
+      const restored = calculateTotals();
       const discount = document.getElementById("checkoutDiscount");
       const total = document.getElementById("checkoutTotal");
-      if (discount) discount.textContent = restored.discount ? `-${window.formatPrice(restored.discount)}` : "0 ₫";
-      if (total) total.textContent = window.formatPrice(restored.total);
+      if (discount) discount.textContent = restored.discount ? `-${formatPrice(restored.discount)}` : "0 ₫";
+      if (total) total.textContent = formatPrice(restored.total);
       if (typeof window.showToast === "function") window.showToast("Mã khuyến mãi không hợp lệ.", true);
     };
 
