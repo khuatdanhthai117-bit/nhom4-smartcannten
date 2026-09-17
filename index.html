@@ -19,31 +19,22 @@
       try {
         const state = JSON.parse(localStorage.getItem("smartCanteenState") || "null") || {};
         const users = Array.isArray(state.users) ? state.users : [];
-        let changed = false;
 
         for (const demo of demoUsers) {
           const existing = users.find((item) => item.identifier === demo.identifier || item.email === demo.email);
-          if (!existing) {
-            users.push({ ...demo });
-            changed = true;
-          } else if (existing.password !== demo.password || existing.role !== demo.role || existing.identifier !== demo.identifier) {
-            Object.assign(existing, demo);
-            changed = true;
-          }
+          if (!existing) users.push({ ...demo });
+          else Object.assign(existing, demo);
         }
 
-        if (changed || !localStorage.getItem("smartCanteenState")) {
-          state.users = users;
-          localStorage.setItem("smartCanteenState", JSON.stringify(state));
-        }
+        state.users = users;
+        localStorage.setItem("smartCanteenState", JSON.stringify(state));
       } catch (error) {
-        // Nếu dữ liệu cũ bị lỗi, xóa state hỏng để Smart Canteen tự tạo dữ liệu demo mặc định.
         localStorage.removeItem("smartCanteenState");
       }
 
-      window.location.replace("./public/index.html");
+      window.location.replace("./public/launcher.html");
     })();
   </script>
-  <noscript><a href="./public/index.html">Mở Smart Canteen</a></noscript>
+  <noscript><a href="./public/launcher.html">Mở Smart Canteen</a></noscript>
 </body>
 </html>
