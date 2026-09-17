@@ -5,11 +5,20 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+const indexHtml = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+const appHtml = fs.readFileSync(path.join(root, 'public', 'app.html'), 'utf8');
+const loginJs = fs.readFileSync(path.join(root, 'public', 'js', 'login.js'), 'utf8');
+const appJs = fs.readFileSync(path.join(root, 'public', 'js', 'app.js'), 'utf8');
+const frontend = `${indexHtml}\n${appHtml}\n${loginJs}\n${appJs}`;
 
 function hasText(value) {
-  assert.ok(html.includes(value), `Thiếu thành phần frontend: ${value}`);
+  assert.ok(frontend.includes(value), `Thiếu thành phần frontend: ${value}`);
 }
+
+test('frontend loaders point to the JavaScript entry files', () => {
+  assert.match(indexHtml, /<script src="\.\/js\/login\.js"><\/script>/);
+  assert.match(appHtml, /<script src="\.\/js\/app\.js"><\/script>/);
+});
 
 test('frontend keeps the Smart Canteen core roles', () => {
   for (const role of ['Sinh viên', 'Giảng viên', 'Khách', 'Nhân viên / Admin']) hasText(role);
@@ -24,55 +33,71 @@ test('frontend keeps the order workflow states', () => {
 });
 
 test('frontend exposes the complete customer flow', () => {
-  for (const fn of ['setLoginType', 'login', 'register', 'renderMenu', 'openFood', 'addToCart', 'changeQty', 'removeCart', 'openCheckout', 'selectSlot', 'selectPayment', 'applyDiscount', 'finishPayment', 'renderOrders', 'cancelOrder', 'openReview', 'submitReview']) {
+  for (const fn of [
+    'setMode',
+    'login',
+    'register',
+    'renderHome',
+    'renderMenu',
+    'detail',
+    'addCart',
+    'changeQty',
+    'renderCart',
+    'checkout',
+    'selectPay',
+    'applyPromo',
+    'finish',
+    'renderOrders',
+    'cancelOrder',
+    'review'
+  ]) {
     hasText(`function ${fn}`);
   }
 });
 
 test('frontend exposes the complete staff flow', () => {
-  for (const fn of ['renderStaff', 'acceptOrder', 'updateOrderStatus', 'openReject', 'confirmReject', 'openPickup', 'verifyPickup', 'openIngredientUpdate', 'saveIngredients']) {
+  for (const fn of ['renderStaff', 'reject', 'pickup', 'ingredientsModal']) {
     hasText(`function ${fn}`);
   }
-  hasText('id="pickupCodeInput"');
-  hasText('input!==o.code');
+  hasText('Mã nhận món không đúng.');
+  hasText("o.status='Đã nhận'");
 });
 
 test('frontend exposes the complete admin flow', () => {
-  for (const fn of ['renderAdminFoods', 'openFoodAdmin', 'saveFoodAdmin', 'deleteFood', 'renderAdminIngredients', 'renderAdminReports', 'renderAdminPromotions', 'renderAdminReviews']) {
+  for (const fn of ['renderAdmin', 'adminTab', 'foodAdmin']) {
     hasText(`function ${fn}`);
   }
-  hasText('function adminOnly()');
+  hasText("currentUser.role!=='admin'");
+  hasText('Xóa món này?');
 });
 
 test('frontend keeps checkout and promotion rules', () => {
   hasText('cancelDeadline:Date.now()+5*60*1000');
-  hasText('makePickupCode()');
-  hasText('selectedPayment');
-  hasText('selectedSlot');
-  hasText('calculateTotals()');
+  hasText("payment='Ví MoMo'");
+  hasText("slot='11:00 – 11:15'");
+  hasText('function totals()');
   hasText('STUDENT10');
   hasText('CAN20');
 });
 
 test('guest login toggles validation correctly', () => {
-  hasText('pw.required=!guest');
-  hasText('otp.required=guest');
+  hasText('$("password").required=!guest');
+  hasText('$("otp").required=guest');
 });
 
 test('role-based page access is guarded in the frontend', () => {
-  hasText('const access={staff:["staff","admin"],admin:["admin"]}');
-  hasText('if(!adminOnly())return');
+  hasText("['staff','admin'].includes(currentUser.role)");
+  hasText("currentUser.role==='admin'");
 });
 
 test('frontend persists demo application state', () => {
   hasText('smartCanteenDemoUser');
   hasText('smartCanteenState');
-  hasText('function persist()');
+  hasText('const persist=');
   hasText('persist();');
 });
 
-test('frontend defines the expected modal containers', () => {
-  for (const id of ['foodModal', 'checkoutModal', 'ingredientModal', 'rejectModal', 'pickupModal', 'reviewModal']) {
-    hasText(`id="${id}"`);
-  }
+test('frontend defines a shared dynamic modal container', () => {
+  hasText('id="modal" class="overlay"');
+  hasText('document.getElementById(\'modal\').innerHTML');
 });
