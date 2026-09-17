@@ -3,66 +3,89 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Smart Canteen</title>
+  <title>Smart Canteen - Đăng nhập</title>
   <style>
-    html,body{margin:0;width:100%;height:100%;background:#f5f7fa;font-family:Segoe UI,Arial,sans-serif;overflow:hidden}
-    #app{width:100%;height:100%;border:0;display:block}
-    #loading{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(135deg,#1d3557,#457b9d,#e63946);color:#fff;z-index:2}
-    .box{background:rgba(255,255,255,.96);color:#1d3557;border-radius:18px;padding:26px 30px;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center;max-width:420px;margin:20px}
-    .box h1{margin:0 0 8px}.box p{margin:6px 0;color:#6c757d}.demo{margin-top:15px;padding:12px;background:#f8f9fa;border-radius:10px;font-size:13px;line-height:1.65;text-align:left}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#1d3557,#457b9d,#e63946)}
+    body{display:flex;align-items:center;justify-content:center;padding:20px}.card{width:100%;max-width:470px;background:#fff;border-radius:22px;padding:30px;box-shadow:0 24px 70px rgba(0,0,0,.28)}
+    .brand{text-align:center;margin-bottom:22px}.icon{font-size:54px}.brand h1{margin:5px 0;color:#1d3557}.brand p{margin:0;color:#6c757d}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px}.tabs button{border:0;padding:10px;border-radius:9px;background:#eef1f4;cursor:pointer;font-weight:600}.tabs button.active{background:#e63946;color:#fff}
+    .group{margin-bottom:13px}.group label{display:block;font-weight:700;font-size:14px;margin-bottom:6px;color:#1d3557}.group input{width:100%;padding:11px 12px;border:1px solid #dee2e6;border-radius:10px;outline:none}.group input:focus{border-color:#457b9d}.hidden{display:none!important}
+    .submit{width:100%;border:0;background:#e63946;color:#fff;padding:12px;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer}.submit:hover{background:#c1121f}.msg{min-height:22px;margin:10px 0 0;text-align:center;font-size:13px;font-weight:600}.demo{margin-top:17px;background:#f8f9fa;border-radius:12px;padding:13px;font-size:12px;line-height:1.7;color:#495057}.demo b{color:#1d3557}.app{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff;display:none}.logout-note{display:none}
   </style>
 </head>
 <body>
-  <div id="loading">
-    <div class="box">
-      <h1>🍜 Smart Canteen</h1>
-      <p>Đang khởi tạo dữ liệu demo...</p>
-      <div class="demo">
-        <b>Sinh viên:</b> 22123456 / sv123<br>
-        <b>Giảng viên:</b> gv@truong.edu.vn / gv123<br>
-        <b>Nhân viên:</b> staff@canteen.vn / staff123<br>
-        <b>Admin:</b> admin@canteen.vn / admin123
-      </div>
+  <div class="card" id="loginCard">
+    <div class="brand"><div class="icon">🍜</div><h1>Smart Canteen</h1><p>Đăng nhập hệ thống</p></div>
+    <div class="tabs">
+      <button class="active" data-type="student">Sinh viên</button>
+      <button data-type="lecturer">Giảng viên</button>
+      <button data-type="guest">Khách</button>
+      <button data-type="staffadmin">Nhân viên / Admin</button>
     </div>
+    <form id="loginForm">
+      <div class="group"><label id="identifierLabel">MSSV / Email</label><input id="identifier" autocomplete="username" required placeholder="Nhập MSSV hoặc email"></div>
+      <div class="group" id="passwordGroup"><label>Mật khẩu</label><input id="password" type="password" autocomplete="current-password" required placeholder="Nhập mật khẩu"></div>
+      <div class="group hidden" id="otpGroup"><label>Mã OTP</label><input id="otp" inputmode="numeric" maxlength="6" placeholder="OTP demo: 123456"></div>
+      <button class="submit" type="submit">Đăng nhập</button>
+      <div class="msg" id="message"></div>
+    </form>
+    <div class="demo"><b>Tài khoản demo:</b><br>• Sinh viên: <b>22123456</b> / <b>sv123</b><br>• Giảng viên: <b>gv@truong.edu.vn</b> / <b>gv123</b><br>• Nhân viên: <b>staff@canteen.vn</b> / <b>staff123</b><br>• Admin: <b>admin@canteen.vn</b> / <b>admin123</b><br>• Khách: số điện thoại + OTP <b>123456</b></div>
   </div>
+  <iframe id="app" class="app" title="Smart Canteen"></iframe>
   <script>
-    (function () {
-      const demoUsers = [
-        { id: 1, name: "Nguyễn Văn An", identifier: "22123456", email: "an@truong.edu.vn", phone: "0912345678", password: "sv123", role: "student" },
-        { id: 2, name: "Trần Thị Bình", identifier: "gv@truong.edu.vn", email: "gv@truong.edu.vn", phone: "0987654321", password: "gv123", role: "lecturer" },
-        { id: 3, name: "Nhân viên Căng tin", identifier: "staff@canteen.vn", email: "staff@canteen.vn", phone: "0900000001", password: "staff123", role: "staff" },
-        { id: 4, name: "Quản trị viên", identifier: "admin@canteen.vn", email: "admin@canteen.vn", phone: "0900000002", password: "admin123", role: "admin" }
-      ];
-
-      try {
-        let state = {};
-        const raw = localStorage.getItem("smartCanteenState");
-        if (raw) {
-          try { state = JSON.parse(raw) || {}; } catch { state = {}; }
-        }
-        const users = Array.isArray(state.users) ? state.users : [];
-
-        for (const demo of demoUsers) {
-          const existing = users.find((u) => u.identifier === demo.identifier || u.email === demo.email);
-          if (existing) Object.assign(existing, demo);
-          else users.push({ ...demo });
-        }
-
-        state.users = users;
-        localStorage.setItem("smartCanteenState", JSON.stringify(state));
-      } catch (error) {
-        try { localStorage.removeItem("smartCanteenState"); } catch {}
+    const DEMO_USERS=[
+      {id:1,name:"Nguyễn Văn An",identifier:"22123456",email:"an@truong.edu.vn",phone:"0912345678",password:"sv123",role:"student"},
+      {id:2,name:"Trần Thị Bình",identifier:"gv@truong.edu.vn",email:"gv@truong.edu.vn",phone:"0987654321",password:"gv123",role:"lecturer"},
+      {id:3,name:"Nhân viên Căng tin",identifier:"staff@canteen.vn",email:"staff@canteen.vn",phone:"0900000001",password:"staff123",role:"staff"},
+      {id:4,name:"Quản trị viên",identifier:"admin@canteen.vn",email:"admin@canteen.vn",phone:"0900000002",password:"admin123",role:"admin"}
+    ];
+    let loginType="student";
+    const $=id=>document.getElementById(id);
+    function setType(type){
+      loginType=type;
+      document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.type===type));
+      const guest=type==="guest";
+      $("identifierLabel").textContent=guest?"Số điện thoại":type==="student"?"MSSV / Email":type==="lecturer"?"Email":"Email nhân viên / admin";
+      $("identifier").placeholder=guest?"Nhập số điện thoại":"Nhập thông tin đăng nhập";
+      $("passwordGroup").classList.toggle("hidden",guest);
+      $("otpGroup").classList.toggle("hidden",!guest);
+      $("password").required=!guest;
+      $("otp").required=guest;
+    }
+    function showMessage(text,error=true){const el=$("message");el.textContent=text;el.style.color=error?"#dc3545":"#2a9d8f"}
+    function ensureState(){
+      let state={};
+      try{state=JSON.parse(localStorage.getItem("smartCanteenState")||"null")||{}}catch{}
+      const users=Array.isArray(state.users)?state.users:[];
+      for(const demo of DEMO_USERS){const found=users.find(u=>u.identifier===demo.identifier||u.email===demo.email);if(found)Object.assign(found,demo);else users.push({...demo})}
+      state.users=users;
+      localStorage.setItem("smartCanteenState",JSON.stringify(state));
+    }
+    function openApp(user){
+      localStorage.setItem("smartCanteenDemoUser",JSON.stringify(user));
+      $("loginCard").style.display="none";
+      const frame=$("app");frame.src="./index.html?login=20260917";frame.style.display="block";
+    }
+    $("loginForm").addEventListener("submit",e=>{
+      e.preventDefault();
+      ensureState();
+      const identifier=$("identifier").value.trim();
+      if(loginType==="guest"){
+        const digits=identifier.replace(/\D/g,"");
+        const otp=$("otp").value.trim();
+        if(!/^\d{10,11}$/.test(digits))return showMessage("Số điện thoại không hợp lệ.");
+        if(otp!=="123456")return showMessage("OTP demo không đúng. Hãy nhập 123456.");
+        openApp({id:"guest-"+Date.now(),name:"Khách "+digits.slice(-4),identifier:digits,phone:digits,role:"guest"});return;
       }
-
-      const iframe = document.createElement("iframe");
-      iframe.id = "app";
-      iframe.title = "Smart Canteen";
-      iframe.src = "./index.html?demo=20260917";
-      iframe.addEventListener("load", function () {
-        setTimeout(() => document.getElementById("loading")?.remove(), 150);
-      });
-      document.body.appendChild(iframe);
-    })();
+      const password=$("password").value;
+      const user=DEMO_USERS.find(u=>(u.identifier===identifier||u.email===identifier)&&u.password===password);
+      if(!user)return showMessage("Thông tin đăng nhập không đúng. Kiểm tra lại tài khoản và mật khẩu.");
+      showMessage("Đăng nhập thành công. Đang mở Smart Canteen...",false);
+      openApp({...user});
+    });
+    document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>setType(b.dataset.type)));
+    window.addEventListener("storage",e=>{if(e.key==="smartCanteenDemoUser"&&!e.newValue){location.reload()}});
+    setType("student");
+    ensureState();
   </script>
 </body>
 </html>
