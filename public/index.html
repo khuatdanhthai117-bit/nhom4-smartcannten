@@ -53,15 +53,11 @@ function saveLogin(user){
  localStorage.setItem('smartCanteenLoggedIn','true');
 }
 function openApp(){
-  // Chuyển trang ngay lập tức. Việc chờ Service Worker trước khi redirect
-  // có thể làm GitHub Pages bị kẹt ở trang đăng nhập.
-  try{
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister())).catch(()=>{});
-    }
-  }catch(e){}
-  const target='./app.html?login=1&v='+Date.now();
-  window.location.href=target;
+  const target=new URL('./app.html',window.location.href);
+  target.searchParams.set('login','1');
+  target.searchParams.set('v',Date.now().toString());
+  // Redirect trực tiếp, không chờ Service Worker và không quay lại trang login.
+  window.location.replace(target.href);
 }
 $('loginForm').addEventListener('submit',function(e){
  e.preventDefault();
@@ -81,7 +77,9 @@ $('loginForm').addEventListener('submit',function(e){
    if(type==='staffadmin'&&!['staff','admin'].includes(user.role))return message('Vui lòng sử dụng tài khoản nhân viên hoặc admin.');
  }
  saveLogin(user);
- $('loginBtn').disabled=true;$('loginBtn').textContent='Đang mở hệ thống...';message('Đăng nhập thành công! Đang mở trang chính...',false);
+ $('loginBtn').disabled=true;
+ $('loginBtn').textContent='Đang mở trang chính...';
+ message('Đăng nhập thành công! Đang mở trang chính...',false);
  openApp();
 });
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setType(b.dataset.type)));
