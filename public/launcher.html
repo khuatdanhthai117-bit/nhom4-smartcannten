@@ -25,7 +25,6 @@
       </div>
     </div>
   </div>
-  <iframe id="app" title="Smart Canteen" src="./index.html"></iframe>
   <script>
     (function () {
       const demoUsers = [
@@ -55,10 +54,14 @@
         try { localStorage.removeItem("smartCanteenState"); } catch {}
       }
 
-      const iframe = document.getElementById("app");
+      const iframe = document.createElement("iframe");
+      iframe.id = "app";
+      iframe.title = "Smart Canteen";
+      iframe.src = "./index.html?demo=20260917";
       iframe.addEventListener("load", function () {
         setTimeout(() => document.getElementById("loading")?.remove(), 150);
       });
+      document.body.appendChild(iframe);
     })();
   </script>
 </body>
