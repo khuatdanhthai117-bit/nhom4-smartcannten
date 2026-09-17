@@ -1,86 +1,77 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Smart Canteen - Đăng nhập</title>
-  <style>
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#1d3557,#457b9d,#e63946);display:flex;align-items:center;justify-content:center;padding:20px}.card{width:100%;max-width:470px;background:#fff;border-radius:22px;padding:30px;box-shadow:0 24px 70px rgba(0,0,0,.28)}h1{margin:5px 0;color:#1d3557}.brand{text-align:center;margin-bottom:22px}.icon{font-size:54px}.brand p{margin:0;color:#6c757d}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px}.tabs button{border:0;padding:10px;border-radius:9px;background:#eef1f4;cursor:pointer;font-weight:600}.tabs button.active{background:#e63946;color:#fff}.group{margin-bottom:13px}.group label{display:block;font-weight:700;font-size:14px;margin-bottom:6px;color:#1d3557}.group input{width:100%;padding:11px 12px;border:1px solid #dee2e6;border-radius:10px;outline:none}.group input:focus{border-color:#457b9d}.hidden{display:none!important}.submit{width:100%;border:0;background:#e63946;color:#fff;padding:12px;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer}.msg{min-height:22px;margin:10px 0;text-align:center;font-size:13px;font-weight:600}.demo{margin-top:17px;background:#f8f9fa;border-radius:12px;padding:13px;font-size:12px;line-height:1.7;color:#495057}.demo b{color:#1d3557}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+<title>Smart Canteen - Đăng nhập</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,#1d3557,#457b9d,#e63946);display:flex;align-items:center;justify-content:center;padding:20px}.card{width:100%;max-width:480px;background:#fff;border-radius:22px;padding:30px;box-shadow:0 24px 70px #0004}.brand{text-align:center;margin-bottom:20px}.icon{font-size:54px}.brand h1{margin:4px 0;color:#1d3557}.brand p{margin:0;color:#6c757d}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px}.tabs button{border:0;padding:10px;border-radius:9px;background:#eef1f4;cursor:pointer;font-weight:700}.tabs button.active{background:#e63946;color:white}.group{margin-bottom:13px}.group label{display:block;font-weight:700;margin-bottom:6px;color:#1d3557}.group input{width:100%;padding:12px;border:1px solid #dee2e6;border-radius:9px}.hidden{display:none!important}.submit{width:100%;border:0;padding:12px;border-radius:9px;background:#e63946;color:#fff;font-weight:800;cursor:pointer}.submit:disabled{opacity:.6}.msg{text-align:center;min-height:22px;margin:10px 0;font-size:13px;font-weight:700}.demo{margin-top:16px;padding:12px;background:#f8f9fa;border-radius:10px;font-size:12px;line-height:1.7;color:#495057}@media(max-width:500px){.card{padding:22px}.tabs{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <div class="card">
-    <div class="brand"><div class="icon">🍜</div><h1>Smart Canteen</h1><p>Đăng nhập hệ thống</p></div>
-    <div class="tabs">
-      <button class="active" data-type="student">Sinh viên</button>
-      <button data-type="lecturer">Giảng viên</button>
-      <button data-type="guest">Khách</button>
-      <button data-type="staffadmin">Nhân viên / Admin</button>
-    </div>
-    <form id="loginForm">
-      <div class="group"><label id="identifierLabel">MSSV / Email</label><input id="identifier" autocomplete="username" required placeholder="Nhập MSSV hoặc email"></div>
-      <div class="group" id="passwordGroup"><label>Mật khẩu</label><input id="password" type="password" autocomplete="current-password" required placeholder="Nhập mật khẩu"></div>
-      <div class="group hidden" id="otpGroup"><label>Mã OTP</label><input id="otp" inputmode="numeric" maxlength="6" placeholder="OTP demo: 123456"></div>
-      <button class="submit" type="submit">Đăng nhập</button>
-      <div class="msg" id="message"></div>
-    </form>
-    <div class="demo"><b>Tài khoản demo:</b><br>• Sinh viên: <b>22123456</b> / <b>sv123</b><br>• Giảng viên: <b>gv@truong.edu.vn</b> / <b>gv123</b><br>• Nhân viên: <b>staff@canteen.vn</b> / <b>staff123</b><br>• Admin: <b>admin@canteen.vn</b> / <b>admin123</b><br>• Khách: số điện thoại + OTP <b>123456</b></div>
-  </div>
-  <script>
-    const DEMO_USERS=[
-      {id:1,name:"Nguyễn Văn An",identifier:"22123456",email:"an@truong.edu.vn",phone:"0912345678",password:"sv123",role:"student"},
-      {id:2,name:"Trần Thị Bình",identifier:"gv@truong.edu.vn",email:"gv@truong.edu.vn",phone:"0987654321",password:"gv123",role:"lecturer"},
-      {id:3,name:"Nhân viên Căng tin",identifier:"staff@canteen.vn",email:"staff@canteen.vn",phone:"0900000001",password:"staff123",role:"staff"},
-      {id:4,name:"Quản trị viên",identifier:"admin@canteen.vn",email:"admin@canteen.vn",phone:"0900000002",password:"admin123",role:"admin"}
-    ];
-    let loginType="student";
-    const $=id=>document.getElementById(id);
-    function setType(type){
-      loginType=type;
-      document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.type===type));
-      const guest=type==="guest";
-      $("identifierLabel").textContent=guest?"Số điện thoại":type==="student"?"MSSV / Email":type==="lecturer"?"Email":"Email nhân viên / admin";
-      $("identifier").placeholder=guest?"Nhập số điện thoại":"Nhập thông tin đăng nhập";
-      $("passwordGroup").classList.toggle("hidden",guest);
-      $("otpGroup").classList.toggle("hidden",!guest);
-      $("password").required=!guest;
-      $("otp").required=guest;
-    }
-    function showMessage(text,error=true){const el=$("message");el.textContent=text;el.style.color=error?"#dc3545":"#2a9d8f"}
-    function seedState(){
-      let state={};
-      try{state=JSON.parse(localStorage.getItem("smartCanteenState")||"null")||{}}catch{state={}}
-      const users=Array.isArray(state.users)?state.users:[];
-      for(const demo of DEMO_USERS){
-        const found=users.find(u=>u.identifier===demo.identifier||u.email===demo.email);
-        if(found)Object.assign(found,demo);else users.push({...demo});
-      }
-      state.users=users;
-      localStorage.setItem("smartCanteenState",JSON.stringify(state));
-    }
-    function goToApp(){window.location.replace("./app.html?login=20260917");}
-    $("loginForm").addEventListener("submit",e=>{
-      e.preventDefault();
-      seedState();
-      const identifier=$("identifier").value.trim();
-      if(loginType==="guest"){
-        const digits=identifier.replace(/\D/g,"");
-        if(!/^\d{10,11}$/.test(digits))return showMessage("Số điện thoại không hợp lệ.");
-        if($("otp").value.trim()!=="123456")return showMessage("OTP demo không đúng. Hãy nhập 123456.");
-        localStorage.setItem("smartCanteenDemoUser",JSON.stringify({id:"guest-"+Date.now(),name:"Khách "+digits.slice(-4),identifier:digits,phone:digits,role:"guest"}));
-      }else{
-        const password=$("password").value;
-        const user=DEMO_USERS.find(u=>(u.identifier===identifier||u.email===identifier)&&u.password===password);
-        if(!user)return showMessage("Tài khoản hoặc mật khẩu không đúng.");
-        localStorage.setItem("smartCanteenDemoUser",JSON.stringify({...user}));
-      }
-      showMessage("Đăng nhập thành công. Đang mở trang chính...",false);
-      if("serviceWorker" in navigator){navigator.serviceWorker.ready.then(()=>setTimeout(goToApp,80)).catch(goToApp)}else goToApp();
-    });
-    document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>setType(b.dataset.type)));
-    setType("student");
-    seedState();
-    if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js?v=20260917",{scope:"./"}).catch(()=>{});
-  </script>
+<div class="card">
+<div class="brand"><div class="icon">🍜</div><h1>Smart Canteen</h1><p>Hệ thống đặt món thông minh</p></div>
+<div class="tabs">
+<button class="active" data-type="student">Sinh viên</button>
+<button data-type="lecturer">Giảng viên</button>
+<button data-type="guest">Khách</button>
+<button data-type="staffadmin">Nhân viên / Admin</button>
+</div>
+<form id="loginForm" novalidate>
+<div class="group"><label id="identifierLabel">MSSV / Email</label><input id="identifier" autocomplete="username" required placeholder="Nhập MSSV hoặc email"></div>
+<div class="group" id="passwordGroup"><label>Mật khẩu</label><input id="password" type="password" autocomplete="current-password" required placeholder="Nhập mật khẩu"></div>
+<div class="group hidden" id="otpGroup"><label>Mã OTP</label><input id="otp" inputmode="numeric" maxlength="6" placeholder="Nhập 123456"></div>
+<button class="submit" id="loginBtn" type="submit">Đăng nhập</button>
+<div class="msg" id="message"></div>
+</form>
+<div class="demo"><b>Tài khoản demo</b><br>• Sinh viên: <b>22123456</b> / <b>sv123</b><br>• Giảng viên: <b>gv@truong.edu.vn</b> / <b>gv123</b><br>• Nhân viên: <b>staff@canteen.vn</b> / <b>staff123</b><br>• Admin: <b>admin@canteen.vn</b> / <b>admin123</b><br>• Khách: nhập SĐT + OTP <b>123456</b></div>
+</div>
+<script>
+'use strict';
+const USERS=[
+{id:1,name:'Nguyễn Văn An',identifier:'22123456',email:'an@truong.edu.vn',phone:'0912345678',password:'sv123',role:'student'},
+{id:2,name:'Trần Thị Bình',identifier:'gv@truong.edu.vn',email:'gv@truong.edu.vn',phone:'0987654321',password:'gv123',role:'lecturer'},
+{id:3,name:'Nhân viên Căng tin',identifier:'staff@canteen.vn',email:'staff@canteen.vn',phone:'0900000001',password:'staff123',role:'staff'},
+{id:4,name:'Quản trị viên',identifier:'admin@canteen.vn',email:'admin@canteen.vn',phone:'0900000002',password:'admin123',role:'admin'}
+];
+let type='student';
+const $=id=>document.getElementById(id);
+function message(text,error=true){$('message').textContent=text;$('message').style.color=error?'#dc3545':'#198754'}
+function setType(t){type=t;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.type===t));const guest=t==='guest';$('identifierLabel').textContent=guest?'Số điện thoại':t==='student'?'MSSV / Email':t==='lecturer'?'Email':'Email nhân viên / admin';$('identifier').placeholder=guest?'Nhập số điện thoại':'Nhập thông tin đăng nhập';$('passwordGroup').classList.toggle('hidden',guest);$('otpGroup').classList.toggle('hidden',!guest);$('password').required=!guest;$('otp').required=guest}
+function saveLogin(user){
+ let state={};try{state=JSON.parse(localStorage.getItem('smartCanteenState')||'{}')||{}}catch(e){state={}}
+ state.users=Array.isArray(state.users)?state.users:[];
+ USERS.forEach(u=>{const i=state.users.findIndex(x=>x.identifier===u.identifier||x.email===u.email);if(i>=0)state.users[i]={...state.users[i],...u};else state.users.push({...u})});
+ state.currentUser={...user};
+ localStorage.setItem('smartCanteenState',JSON.stringify(state));
+ localStorage.setItem('smartCanteenDemoUser',JSON.stringify(user));
+ localStorage.setItem('currentUser',JSON.stringify(user));
+ localStorage.setItem('smartCanteenLoggedIn','true');
+}
+$('loginForm').addEventListener('submit',function(e){
+ e.preventDefault();
+ const id=$('identifier').value.trim();
+ let user=null;
+ if(type==='guest'){
+   const phone=id.replace(/\D/g,'');
+   if(!/^\d{10,11}$/.test(phone))return message('Số điện thoại phải có 10–11 chữ số.');
+   if($('otp').value.trim()!=='123456')return message('OTP không đúng. Hãy nhập 123456.');
+   user={id:'guest-'+Date.now(),name:'Khách '+phone.slice(-4),identifier:phone,phone,role:'guest'};
+ }else{
+   const password=$('password').value;
+   user=USERS.find(u=>(u.identifier.toLowerCase()===id.toLowerCase()||u.email.toLowerCase()===id.toLowerCase())&&u.password===password);
+   if(!user)return message('Tài khoản hoặc mật khẩu không đúng.');
+   if(type==='student'&&user.role!=='student')return message('Tài khoản này không phải tài khoản sinh viên.');
+   if(type==='lecturer'&&user.role!=='lecturer')return message('Tài khoản này không phải tài khoản giảng viên.');
+   if(type==='staffadmin'&&!['staff','admin'].includes(user.role))return message('Vui lòng sử dụng tài khoản nhân viên hoặc admin.');
+ }
+ saveLogin(user);
+ $('loginBtn').disabled=true;$('loginBtn').textContent='Đang đăng nhập...';message('Đăng nhập thành công! Đang mở hệ thống...',false);
+ setTimeout(()=>{window.location.href='./app.html?login=1&v=20260917'},250);
+});
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setType(b.dataset.type)));
+setType('student');
+</script>
 </body>
 </html>
