@@ -1,0 +1,62 @@
+name: Repair Smart Canteen login flow
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Repair app startup session handling
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('public/app.html')
+          s = p.read_text(encoding='utf-8')
+
+          css_old = '.hidden{display:none!important}'
+          css_new = '.hidden{display:none!important}.has-session #authScreen{display:none!important}.has-session #mainApp{display:block!important}'
+          if '.has-session #authScreen' not in s:
+              s = s.replace(css_old, css_new, 1)
+
+          marker = '<body>\n'
+          early = '''<body>\n<script>\n(function(){\n  try {\n    const raw=localStorage.getItem("smartCanteenDemoUser")||localStorage.getItem("currentUser");\n    if(raw){ document.documentElement.classList.add("has-session"); }\n    else if(new URLSearchParams(location.search).get("login")==="1"){ window.location.replace("./index.html"); }\n  } catch(e) {}\n})();\n</script>\n'''
+          if '<script>\n(function(){\n  try {\n    const raw=localStorage.getItem("smartCanteenDemoUser")' not in s:
+              s = s.replace(marker, early, 1)
+
+          old_init = '(function init(){createDemoOrders();const saved=localStorage.getItem("smartCanteenDemoUser");if(saved){try{currentUser=JSON.parse(saved);if(currentUser)enterApp()}catch(e){localStorage.removeItem("smartCanteenDemoUser")}}if(!currentUser){document.getElementById("authScreen").classList.remove("hidden");document.getElementById("mainApp").classList.add("hidden")}setLoginType("student",document.querySelector(".auth-tab"));})();'
+          new_init = '''(function init(){\n  createDemoOrders();\n  const saved=localStorage.getItem("smartCanteenDemoUser")||localStorage.getItem("currentUser");\n  if(saved){\n    try{\n      currentUser=JSON.parse(saved);\n      if(currentUser&&currentUser.role){\n        localStorage.setItem("smartCanteenDemoUser",JSON.stringify(currentUser));\n        localStorage.setItem("currentUser",JSON.stringify(currentUser));\n        enterApp();\n        setLoginType("student",document.querySelector(".auth-tab"));\n        return;\n      }\n    }catch(e){\n      localStorage.removeItem("smartCanteenDemoUser");\n      localStorage.removeItem("currentUser");\n    }\n  }\n  document.getElementById("authScreen").classList.remove("hidden");\n  document.getElementById("mainApp").classList.add("hidden");\n  setLoginType("student",document.querySelector(".auth-tab"));\n})();'''
+          if old_init in s:
+              s = s.replace(old_init, new_init, 1)
+          else:
+              raise SystemExit('Expected app init block not found; refusing unsafe edit.')
+
+          old_logout = 'function logout(){currentUser=null;cart=[];discountCode="";localStorage.removeItem("smartCanteenDemoUser");document.getElementById("mainApp").classList.add("hidden");document.getElementById("authScreen").classList.remove("hidden");showLogin();setLoginType("student",document.querySelector(".auth-tab"))}'
+          new_logout = 'function logout(){currentUser=null;cart=[];discountCode="";localStorage.removeItem("smartCanteenDemoUser");localStorage.removeItem("currentUser");localStorage.removeItem("smartCanteenLoggedIn");document.documentElement.classList.remove("has-session");document.getElementById("mainApp").classList.add("hidden");document.getElementById("authScreen").classList.remove("hidden");showLogin();setLoginType("student",document.querySelector(".auth-tab"))}'
+          if old_logout in s:
+              s = s.replace(old_logout, new_logout, 1)
+
+          p.write_text(s, encoding='utf-8')
+
+      - name: Remove obsolete iframe launcher
+        run: rm -f public/launcher.html
+
+      - name: Commit repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/app.html public/launcher.html
+          if git diff --cached --quiet; then
+            echo "No repair changes needed."
+            exit 0
+          fi
+          git commit -m "Fix single-step login and session restore"
+          git push
