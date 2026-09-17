@@ -58,6 +58,7 @@
       state.users=users;
       localStorage.setItem("smartCanteenState",JSON.stringify(state));
     }
+    function goToApp(){window.location.replace("./app.html?login=20260917");}
     $("loginForm").addEventListener("submit",e=>{
       e.preventDefault();
       seedState();
@@ -74,11 +75,12 @@
         localStorage.setItem("smartCanteenDemoUser",JSON.stringify({...user}));
       }
       showMessage("Đăng nhập thành công. Đang mở trang chính...",false);
-      window.location.replace("./app.html?login=20260917");
+      if("serviceWorker" in navigator){navigator.serviceWorker.ready.then(()=>setTimeout(goToApp,80)).catch(goToApp)}else goToApp();
     });
     document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>setType(b.dataset.type)));
     setType("student");
     seedState();
+    if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js?v=20260917",{scope:"./"}).catch(()=>{});
   </script>
 </body>
 </html>
