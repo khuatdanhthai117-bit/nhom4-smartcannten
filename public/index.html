@@ -53,7 +53,8 @@ function saveLogin(user){
  localStorage.setItem('smartCanteenLoggedIn','true');
 }
 function openApp(){
-  const target=new URL('./main.html',window.location.href);
+  const target=new URL('./app.html',window.location.href);
+  target.searchParams.set('login','1');
   target.searchParams.set('v',Date.now().toString());
   window.location.replace(target.href);
 }
