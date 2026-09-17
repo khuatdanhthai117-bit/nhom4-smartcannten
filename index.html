@@ -11,21 +11,44 @@
 <body>
   <p>Đang mở Smart Canteen...</p>
   <script>
-    // Dọn dữ liệu localStorage bị hỏng trước khi app chính khởi chạy.
+    // Bootstrap an toàn cho GitHub Pages:
+    // khôi phục state hợp lệ, luôn bảo đảm tài khoản demo tồn tại,
+    // rồi mới mở app chính.
+    const demoUsers = [
+      {id:1,name:"Nguyễn Văn An",identifier:"22123456",email:"an@truong.edu.vn",phone:"0912345678",password:"sv123",role:"student"},
+      {id:2,name:"Trần Thị Bình",identifier:"gv@truong.edu.vn",email:"gv@truong.edu.vn",phone:"0987654321",password:"gv123",role:"lecturer"},
+      {id:3,name:"Nhân viên Căng tin",identifier:"staff@canteen.vn",email:"staff@canteen.vn",phone:"0900000001",password:"staff123",role:"staff"},
+      {id:4,name:"Quản trị viên",identifier:"admin@canteen.vn",email:"admin@canteen.vn",phone:"0900000002",password:"admin123",role:"admin"}
+    ];
+
     try {
-      const state = localStorage.getItem("smartCanteenState");
-      if (state) JSON.parse(state);
-    } catch (e) {
-      localStorage.removeItem("smartCanteenState");
-    }
-    try {
-      const user = localStorage.getItem("smartCanteenDemoUser");
-      if (user) JSON.parse(user);
-    } catch (e) {
+      let state = {};
+      try {
+        state = JSON.parse(localStorage.getItem("smartCanteenState") || "{}");
+      } catch (e) {
+        state = {};
+      }
+
+      if (!Array.isArray(state.users)) state.users = [];
+      for (const demo of demoUsers) {
+        const found = state.users.find(
+          u => u && (u.identifier === demo.identifier || u.email === demo.email)
+        );
+        if (found) Object.assign(found, demo);
+        else state.users.push({...demo});
+      }
+
+      localStorage.setItem("smartCanteenState", JSON.stringify(state));
+      // Không để phiên cũ tự bỏ qua màn hình đăng nhập.
       localStorage.removeItem("smartCanteenDemoUser");
+    } catch (e) {
+      // Không chặn app nếu localStorage bị hạn chế.
     }
-    window.location.replace("./public/app.html?entry=20260917");
+
+    window.location.replace("./public/app.html?entry=20260917-loginfix");
   </script>
-  <noscript><a href="./public/app.html?entry=20260917">Mở Smart Canteen</a></noscript>
+  <noscript>
+    <a href="./public/app.html?entry=20260917-loginfix">Mở Smart Canteen</a>
+  </noscript>
 </body>
 </html>
