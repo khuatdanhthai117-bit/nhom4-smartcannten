@@ -11,6 +11,19 @@
 <body>
   <p>Đang mở Smart Canteen...</p>
   <script>
+    // Dọn dữ liệu localStorage bị hỏng trước khi app chính khởi chạy.
+    try {
+      const state = localStorage.getItem("smartCanteenState");
+      if (state) JSON.parse(state);
+    } catch (e) {
+      localStorage.removeItem("smartCanteenState");
+    }
+    try {
+      const user = localStorage.getItem("smartCanteenDemoUser");
+      if (user) JSON.parse(user);
+    } catch (e) {
+      localStorage.removeItem("smartCanteenDemoUser");
+    }
     window.location.replace("./public/app.html?entry=20260917");
   </script>
   <noscript><a href="./public/app.html?entry=20260917">Mở Smart Canteen</a></noscript>
