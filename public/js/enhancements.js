@@ -94,6 +94,29 @@
     window.addEventListener("unhandledrejection", () => report("vui lòng thử lại"));
   }
 
+  function ensureDemoAccounts() {
+    if (typeof users === "undefined" || !Array.isArray(users)) return;
+    const demoUsers = [
+      { id: 1, name: "Nguyễn Văn An", identifier: "22123456", email: "an@truong.edu.vn", phone: "0912345678", password: "sv123", role: "student" },
+      { id: 2, name: "Trần Thị Bình", identifier: "gv@truong.edu.vn", email: "gv@truong.edu.vn", phone: "0987654321", password: "gv123", role: "lecturer" },
+      { id: 3, name: "Nhân viên Căng tin", identifier: "staff@canteen.vn", email: "staff@canteen.vn", phone: "0900000001", password: "staff123", role: "staff" },
+      { id: 4, name: "Quản trị viên", identifier: "admin@canteen.vn", email: "admin@canteen.vn", phone: "0900000002", password: "admin123", role: "admin" }
+    ];
+    let changed = false;
+    for (const demo of demoUsers) {
+      let existing = users.find((item) => item.identifier === demo.identifier || item.email === demo.email);
+      if (!existing) {
+        users.push(structuredClone(demo));
+        changed = true;
+      } else {
+        const before = JSON.stringify(existing);
+        Object.assign(existing, demo);
+        changed ||= JSON.stringify(existing) !== before;
+      }
+    }
+    if (changed && typeof persist === "function") persist();
+  }
+
   function fixPromotionDisplay() {
     const originalApplyDiscount = window.applyDiscount;
     if (typeof originalApplyDiscount !== "function" || originalApplyDiscount.__smartCanteenPatched) return;
@@ -139,6 +162,7 @@
     bindLoading();
     bindEscape();
     bindRuntimeErrors();
+    ensureDemoAccounts();
     fixPromotionDisplay();
     showEmptyStates();
     const observer = new MutationObserver(() => {
