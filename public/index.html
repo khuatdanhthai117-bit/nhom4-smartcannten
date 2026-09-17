@@ -52,14 +52,16 @@ function saveLogin(user){
  localStorage.setItem('currentUser',JSON.stringify(user));
  localStorage.setItem('smartCanteenLoggedIn','true');
 }
-async function openApp(){
+function openApp(){
+  // Chuyển trang ngay lập tức. Việc chờ Service Worker trước khi redirect
+  // có thể làm GitHub Pages bị kẹt ở trang đăng nhập.
   try{
     if('serviceWorker' in navigator){
-      const regs=await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map(r=>r.unregister()));
+      navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister())).catch(()=>{});
     }
   }catch(e){}
-  window.location.replace('./app.html?login=1&v='+Date.now());
+  const target='./app.html?login=1&v='+Date.now();
+  window.location.href=target;
 }
 $('loginForm').addEventListener('submit',function(e){
  e.preventDefault();
