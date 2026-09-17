@@ -53,10 +53,8 @@ function saveLogin(user){
  localStorage.setItem('smartCanteenLoggedIn','true');
 }
 function openApp(){
-  const target=new URL('./app.html',window.location.href);
-  target.searchParams.set('login','1');
+  const target=new URL('./main.html',window.location.href);
   target.searchParams.set('v',Date.now().toString());
-  // Redirect trực tiếp, không chờ Service Worker và không quay lại trang login.
   window.location.replace(target.href);
 }
 $('loginForm').addEventListener('submit',function(e){
