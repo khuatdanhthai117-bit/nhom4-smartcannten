@@ -7,48 +7,17 @@
   <meta http-equiv="pragma" content="no-cache">
   <meta http-equiv="expires" content="0">
   <title>Smart Canteen</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#1d3557,#457b9d,#e63946);display:grid;place-items:center;color:#1d3557}.card{width:min(92%,520px);background:#fff;border-radius:24px;padding:36px;box-shadow:0 24px 70px rgba(0,0,0,.25);text-align:center}.icon{font-size:64px}.card h1{margin:8px 0;color:#1d3557}.card p{color:#6c757d}.btn{display:inline-block;margin-top:14px;padding:12px 22px;border-radius:10px;background:#e63946;color:#fff;text-decoration:none;font-weight:700}.small{font-size:12px;margin-top:16px}
+  </style>
 </head>
 <body>
-  <p>Đang mở Smart Canteen...</p>
-  <script>
-    // Bootstrap an toàn cho GitHub Pages:
-    // khôi phục state hợp lệ, luôn bảo đảm tài khoản demo tồn tại,
-    // rồi mới mở app chính.
-    const demoUsers = [
-      {id:1,name:"Nguyễn Văn An",identifier:"22123456",email:"an@truong.edu.vn",phone:"0912345678",password:"sv123",role:"student"},
-      {id:2,name:"Trần Thị Bình",identifier:"gv@truong.edu.vn",email:"gv@truong.edu.vn",phone:"0987654321",password:"gv123",role:"lecturer"},
-      {id:3,name:"Nhân viên Căng tin",identifier:"staff@canteen.vn",email:"staff@canteen.vn",phone:"0900000001",password:"staff123",role:"staff"},
-      {id:4,name:"Quản trị viên",identifier:"admin@canteen.vn",email:"admin@canteen.vn",phone:"0900000002",password:"admin123",role:"admin"}
-    ];
-
-    try {
-      let state = {};
-      try {
-        state = JSON.parse(localStorage.getItem("smartCanteenState") || "{}");
-      } catch (e) {
-        state = {};
-      }
-
-      if (!Array.isArray(state.users)) state.users = [];
-      for (const demo of demoUsers) {
-        const found = state.users.find(
-          u => u && (u.identifier === demo.identifier || u.email === demo.email)
-        );
-        if (found) Object.assign(found, demo);
-        else state.users.push({...demo});
-      }
-
-      localStorage.setItem("smartCanteenState", JSON.stringify(state));
-      // Không để phiên cũ tự bỏ qua màn hình đăng nhập.
-      localStorage.removeItem("smartCanteenDemoUser");
-    } catch (e) {
-      // Không chặn app nếu localStorage bị hạn chế.
-    }
-
-    window.location.replace("./public/app.html?entry=20260917-loginfix");
-  </script>
-  <noscript>
-    <a href="./public/app.html?entry=20260917-loginfix">Mở Smart Canteen</a>
-  </noscript>
+  <main class="card">
+    <div class="icon">🍜</div>
+    <h1>Smart Canteen</h1>
+    <p>Hệ thống đặt món thông minh</p>
+    <a class="btn" href="./public/index.html">Mở website</a>
+    <p class="small">Nếu trang không tự chuyển, hãy bấm nút trên.</p>
+  </main>
 </body>
 </html>
