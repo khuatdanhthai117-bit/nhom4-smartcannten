@@ -6,7 +6,7 @@
 <title>Smart Canteen - Hệ thống đặt món thông minh</title>
 <style>
 :root{--primary:#e63946;--primary-dark:#c1121f;--secondary:#1d3557;--accent:#457b9d;--success:#2a9d8f;--warning:#f4a261;--danger:#dc3545;--bg:#f5f7fa;--text:#212529;--muted:#6c757d;--border:#dee2e6;--shadow:0 4px 15px rgba(0,0,0,.08);--radius:14px}
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}.has-session #authScreen{display:none!important}.has-session #mainApp{display:block!important}
 header{background:linear-gradient(135deg,var(--secondary),var(--accent));color:#fff;position:sticky;top:0;z-index:1000;box-shadow:var(--shadow)}.header-inner{max-width:1250px;margin:auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px}.logo{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800}.logo-icon{background:var(--primary);width:40px;height:40px;border-radius:50%;display:grid;place-items:center}.header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.header-btn{border:0;background:rgba(255,255,255,.15);color:#fff;padding:8px 13px;border-radius:20px}.header-btn:hover{background:rgba(255,255,255,.28)}.user-pill{padding:7px 12px;background:rgba(255,255,255,.12);border-radius:20px;font-size:14px}.role-badge{background:var(--primary);padding:2px 7px;border-radius:12px;font-size:11px;margin-left:4px}
 .page{max-width:1250px;margin:auto;padding:25px 20px}.hero{background:linear-gradient(135deg,#fff,#eef5fa);border-radius:20px;padding:35px;margin-bottom:22px;display:flex;justify-content:space-between;gap:20px;align-items:center}.hero h1{font-size:34px;color:var(--secondary);margin-bottom:8px}.hero p{color:var(--muted);max-width:700px}.hero-actions{display:flex;gap:10px;flex-wrap:wrap}.banner{background:linear-gradient(90deg,var(--success),#264653);color:#fff;padding:10px 15px;text-align:center;border-radius:10px;margin-bottom:15px}
 .btn{border:0;border-radius:9px;padding:10px 16px;font-weight:600}.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}.btn-secondary{background:#e9ecef;color:var(--text)}.btn-success{background:var(--success);color:#fff}.btn-warning{background:var(--warning);color:#fff}.btn-danger{background:var(--danger);color:#fff}.btn-dark{background:var(--secondary);color:#fff}.btn:disabled{opacity:.5;cursor:not-allowed}.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:22px 0 14px}.section-title h2{font-size:22px;color:var(--secondary)}
@@ -20,6 +20,15 @@ header{background:linear-gradient(135deg,var(--secondary),var(--accent));color:#
 </style>
 </head>
 <body>
+<script>
+(function(){
+  try {
+    const raw=localStorage.getItem("smartCanteenDemoUser")||localStorage.getItem("currentUser");
+    if(raw){ document.documentElement.classList.add("has-session"); }
+    else if(new URLSearchParams(location.search).get("login")==="1"){ window.location.replace("./index.html"); }
+  } catch(e) {}
+})();
+</script>
 <div id="authScreen" class="auth-screen"><div class="auth-card">
   <div class="auth-logo"><div class="big-icon">🍜</div><h1>Smart Canteen</h1><p>Hệ thống đặt món thông minh</p></div>
   <div id="loginPanel">
@@ -71,7 +80,7 @@ function showRegister(){document.getElementById("loginPanel").classList.add("hid
 function login(e){e.preventDefault();const identifier=document.getElementById("loginIdentifier").value.trim();if(loginType==="guest"){const otp=document.getElementById("loginOtp").value.trim();if(!/^[0-9]{10,11}$/.test(identifier.replace(/\D/g,""))){showToast("Số điện thoại không hợp lệ.",true);return}if(otp!=="123456"){showToast("OTP demo không đúng. Hãy nhập 123456.",true);return}currentUser={id:"guest-"+Date.now(),name:"Khách "+identifier.slice(-4),identifier,phone:identifier,role:"guest"}}else{const password=document.getElementById("loginPassword").value;const u=users.find(x=>(x.identifier===identifier||x.email===identifier)&&x.password===password);if(!u){showToast("Thông tin đăng nhập không đúng!",true);return}currentUser=structuredClone(u)}localStorage.setItem("smartCanteenDemoUser",JSON.stringify(currentUser));enterApp();}
 function register(e){e.preventDefault();const name=document.getElementById("regName").value.trim(),email=document.getElementById("regEmail").value.trim().toLowerCase(),phone=document.getElementById("regPhone").value.trim(),studentId=document.getElementById("regStudentId").value.trim(),password=document.getElementById("regPassword").value;if(users.some(x=>x.email?.toLowerCase()===email||(studentId&&x.identifier===studentId))){showToast("Email hoặc MSSV đã tồn tại!",true);return}const u={id:"u-"+Date.now(),name,email,phone,identifier:studentId||email,password,role:studentId?"student":"guest"};users.push(u);currentUser=structuredClone(u);persist();localStorage.setItem("smartCanteenDemoUser",JSON.stringify(currentUser));enterApp();showToast("Đăng ký thành công!")}
 function enterApp(){document.getElementById("authScreen").classList.add("hidden");document.getElementById("mainApp").classList.remove("hidden");document.getElementById("headerUserName").textContent=currentUser.name;document.getElementById("headerRole").textContent={student:"Sinh viên",lecturer:"Giảng viên",guest:"Khách",staff:"Nhân viên",admin:"Admin"}[currentUser.role]||currentUser.role;document.getElementById("staffNav").classList.toggle("hidden",!["staff","admin"].includes(currentUser.role));document.getElementById("adminNav").classList.toggle("hidden",currentUser.role!=="admin");showPage("home")}
-function logout(){currentUser=null;cart=[];discountCode="";localStorage.removeItem("smartCanteenDemoUser");document.getElementById("mainApp").classList.add("hidden");document.getElementById("authScreen").classList.remove("hidden");showLogin();setLoginType("student",document.querySelector(".auth-tab"))}
+function logout(){currentUser=null;cart=[];discountCode="";localStorage.removeItem("smartCanteenDemoUser");localStorage.removeItem("currentUser");localStorage.removeItem("smartCanteenLoggedIn");document.documentElement.classList.remove("has-session");document.getElementById("mainApp").classList.add("hidden");document.getElementById("authScreen").classList.remove("hidden");showLogin();setLoginType("student",document.querySelector(".auth-tab"))}
 function renderCategories(){document.getElementById("categories").innerHTML=categories.map(c=>`<button class="cat-btn ${selectedCategory===c.id?"active":""}" onclick="selectCategory('${escapeHtml(c.id)}')">${escapeHtml(c.name)}</button>`).join("")}
 function selectCategory(id){selectedCategory=id;renderMenu()}function resetMenuFilter(){selectedCategory="all";document.getElementById("searchInput").value="";renderMenu()}
 function renderMenu(){renderCategories();const q=(document.getElementById("searchInput")?.value||"").toLowerCase().trim();const list=menuData.filter(i=>(selectedCategory==="all"||i.category===selectedCategory)&&(!q||`${i.name} ${i.desc} ${i.ingredients}`.toLowerCase().includes(q)));document.getElementById("menuGrid").innerHTML=list.length?list.map(i=>`<div class="menu-card"><div class="food-img">${i.emoji}${i.badge?`<span class="food-badge">${escapeHtml(i.badge)}</span>`:""}${!i.available?`<span class="out-badge">Hết món</span>`:""}</div><div class="food-body"><div class="food-name">${escapeHtml(i.name)}</div><div class="food-desc">${escapeHtml(i.desc)}</div><div class="food-bottom"><span class="price">${formatPrice(priceFor(i))}</span><button class="add-circle" ${!i.available?"disabled":""} onclick="addToCart(${i.id})">+</button></div><button class="btn btn-secondary" style="margin-top:8px" onclick="openFood(${i.id})">Xem chi tiết</button></div></div>`).join(""):"<div class='card'><b>Không tìm thấy món phù hợp.</b></div>";renderCart()}
@@ -105,5 +114,26 @@ function renderAdminReviews(){if(!adminOnly())return;document.getElementById("ad
 function openReview(id){const o=orders.find(x=>x.id===id);if(!o||o.userId!==currentUser?.id||o.status!=="Đã nhận"||reviews.some(r=>r.orderId===id&&r.userId===currentUser.id))return;document.getElementById("reviewOrderId").value=id;document.getElementById("reviewText").value="";document.getElementById("reviewOverlay").classList.add("show")}
 function submitReview(){const id=Number(document.getElementById("reviewOrderId").value),o=orders.find(x=>x.id===id),stars=Number(document.getElementById("reviewStars").value),text=document.getElementById("reviewText").value.trim();if(!o||o.userId!==currentUser?.id||o.status!=="Đã nhận"||reviews.some(r=>r.orderId===id&&r.userId===currentUser.id)){showToast("Không thể gửi đánh giá cho đơn này.",true);return}reviews.push({id:nextReviewId++,orderId:id,userId:currentUser.id,customer:currentUser.name,stars,text,createdAt:new Date().toLocaleString("vi-VN")});persist();closeModal("reviewOverlay");renderOrders();showToast("Cảm ơn bạn đã đánh giá!")}
 function createDemoOrders(){if(orders.length)return;const student=users.find(u=>u.role==="student");if(!student)return;orders.push({id:nextOrderId++,code:"246810",userId:student.id,customer:student.name,role:"student",phone:student.phone,pickupSlot:"11:00 – 11:15",paymentMethod:"Ví MoMo",paymentStatus:"Đã thanh toán (demo)",status:"Chờ xác nhận",items:[{...structuredClone(menuData[0]),qty:1,finalPrice:priceFor(menuData[0]),note:"Ít cay"}],subtotal:priceFor(menuData[0]),discount:0,total:priceFor(menuData[0]),note:"Ít cay",createdAt:new Date().toLocaleString("vi-VN"),cancelDeadline:Date.now()+5*60*1000,rejectReason:""});persist();updateCounters()}
-(function init(){createDemoOrders();const saved=localStorage.getItem("smartCanteenDemoUser");if(saved){try{currentUser=JSON.parse(saved);if(currentUser)enterApp()}catch(e){localStorage.removeItem("smartCanteenDemoUser")}}if(!currentUser){document.getElementById("authScreen").classList.remove("hidden");document.getElementById("mainApp").classList.add("hidden")}setLoginType("student",document.querySelector(".auth-tab"));})();
+(function init(){
+  createDemoOrders();
+  const saved=localStorage.getItem("smartCanteenDemoUser")||localStorage.getItem("currentUser");
+  if(saved){
+    try{
+      currentUser=JSON.parse(saved);
+      if(currentUser&&currentUser.role){
+        localStorage.setItem("smartCanteenDemoUser",JSON.stringify(currentUser));
+        localStorage.setItem("currentUser",JSON.stringify(currentUser));
+        enterApp();
+        setLoginType("student",document.querySelector(".auth-tab"));
+        return;
+      }
+    }catch(e){
+      localStorage.removeItem("smartCanteenDemoUser");
+      localStorage.removeItem("currentUser");
+    }
+  }
+  document.getElementById("authScreen").classList.remove("hidden");
+  document.getElementById("mainApp").classList.add("hidden");
+  setLoginType("student",document.querySelector(".auth-tab"));
+})();
 </script></body></html>
