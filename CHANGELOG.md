@@ -2,6 +2,17 @@
 
 Các thay đổi đáng chú ý của Smart Canteen.
 
+## 1.5.0 - 2026-09-20
+
+### Nâng cấp vận hành
+- Mở rộng dashboard Nhân viên với bộ lọc trạng thái, tìm kiếm đơn và mức ưu tiên xử lý.
+- Bổ sung xem chi tiết đơn, nhật ký trạng thái và xác nhận giao món bằng mã.
+- Bổ sung quản lý tài khoản người dùng trong Admin với chức năng khóa/mở khóa demo.
+- Bổ sung quản lý trạng thái bán món và tồn kho ngay trong khu vực Admin.
+- Bổ sung tạo/bật/tắt/xóa khuyến mãi từ giao diện quản trị.
+- Bổ sung tab quản lý đơn hàng, tổng quan và báo cáo vận hành.
+- Mở rộng test case và tài liệu Use Case cho các nghiệp vụ mới.
+
 ## 1.4.0 - 2026-09-20
 
 ### Bổ sung nội dung
