@@ -44,6 +44,8 @@ Xây dựng một hệ thống web có giao diện trực quan, dễ sử dụng
 
 ## ⭐ 4. Chức năng chính
 
+> Phiên bản giao diện hiện tại đã được bổ sung dữ liệu món phong phú hơn (mô tả, thành phần, năng lượng, thời gian chuẩn bị, đánh giá, số lượng đã bán, mức cay và thông tin tồn kho demo) để việc trình diễn và thuyết minh nghiệp vụ trực quan hơn.
+
 ### 4.1. Chức năng dành cho khách hàng
 
 **Tài khoản và vai trò**
@@ -304,7 +306,7 @@ API hiện mang tính **demo**, chưa phải API production có xác thực, dat
 ## 📚 13. Tài liệu dự án
 
 - [`docs/KIEN_TRUC.md`](docs/KIEN_TRUC.md) — kiến trúc hệ thống và hướng phát triển.
-- [`docs/CHUC_NANG.md`](docs/CHUC_NANG.md) — đặc tả chức năng và luồng nghiệp vụ.
+- [`docs/CHUC_NANG.md`](docs/CHUC_NANG.md) — đặc tả chức năng chi tiết, dữ liệu, quy tắc nghiệp vụ và luồng xử lý.
 - [`docs/HUONG_DAN_SU_DUNG.md`](docs/HUONG_DAN_SU_DUNG.md) — hướng dẫn chạy và sử dụng.
 - [`docs/API.md`](docs/API.md) — mô tả API demo.
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — quy trình đóng góp và quy ước commit.
