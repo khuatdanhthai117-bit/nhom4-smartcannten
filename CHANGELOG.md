@@ -2,6 +2,14 @@
 
 Các thay đổi đáng chú ý của Smart Canteen.
 
+## 1.4.0 - 2026-09-20
+
+### Bổ sung nội dung
+- Làm phong phú dữ liệu thực đơn với thành phần, năng lượng, thời gian chuẩn bị, đánh giá, số lượng đã bán, mức cay và nhóm món phù hợp.
+- Bổ sung thêm các món mẫu để giao diện thực đơn có nội dung đa dạng hơn.
+- Mở rộng phần hiển thị trang chủ, chi tiết món, đơn hàng và quản trị món ăn.
+- Mở rộng `docs/CHUC_NANG.md` thành đặc tả chức năng chi tiết theo từng vai trò và quy tắc nghiệp vụ.
+
 ## 1.3.0 - 2026-09-15
 
 ### Cải thiện
