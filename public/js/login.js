@@ -22,7 +22,7 @@
     data.users=Array.isArray(data.users)?data.users:[];
     for(const demo of DEMO_USERS){
       const i=data.users.findIndex(u=>u.identifier===demo.identifier||u.email===demo.email);
-      if(i>=0)data.users[i]={...data.users[i],...demo};else data.users.push({...demo});
+      if(i>=0)data.users[i]={...demo,...data.users[i]};else data.users.push({...demo});
     }
     data.currentUser={...user};
     localStorage.setItem("smartCanteenState",JSON.stringify(data));
@@ -56,8 +56,9 @@
       user={id:"guest-"+Date.now(),name:"Khách "+phone.slice(-4),identifier:phone,phone,role:"guest"};
     }else{
       const pass=$("password").value;
-      const found=DEMO_USERS.find(u=>(u.identifier.toLowerCase()===identifier.toLowerCase()||u.email.toLowerCase()===identifier.toLowerCase())&&u.password===pass);
+      const stored=readState();const users=Array.isArray(stored.users)?stored.users:[];const found=users.find(u=>(u.identifier?.toLowerCase()===identifier.toLowerCase()||u.email?.toLowerCase()===identifier.toLowerCase())&&u.password===pass);
       if(!found)return showMessage("Tài khoản hoặc mật khẩu không đúng.");
+      if(found.active===false)return showMessage("Tài khoản đang bị tạm khóa. Vui lòng liên hệ quản trị viên.");
       if(mode==="student"&&found.role!=="student")return showMessage("Hãy dùng tài khoản sinh viên.");
       if(mode==="lecturer"&&found.role!=="lecturer")return showMessage("Hãy dùng tài khoản giảng viên.");
       if(mode==="staffadmin"&&!['staff','admin'].includes(found.role))return showMessage("Hãy dùng tài khoản nhân viên hoặc admin.");
