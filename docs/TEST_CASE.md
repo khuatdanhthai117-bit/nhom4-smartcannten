@@ -28,6 +28,16 @@ Tài liệu dùng để kiểm tra các luồng chính của Smart Canteen trư�
 | TC18 | Quản lý menu | Admin mở quản lý món | Danh sách và thao tác quản lý hiển thị |
 | TC19 | Nguyên liệu | Admin/nhân viên mở kho | Tồn kho và trạng thái nguyên liệu hiển thị |
 | TC20 | Responsive | Thu nhỏ trình duyệt / điện thoại | Bố cục không bị vỡ, có thể thao tác |
+| TC21 | Staff tìm kiếm đơn | Nhập mã đơn/tên khách | Chỉ hiển thị đơn phù hợp |
+| TC22 | Staff lọc trạng thái | Chọn từng trạng thái | Danh sách được lọc đúng |
+| TC23 | Staff ưu tiên đơn | Có đơn chờ lâu | Hiển thị mức Cần xử lý gấp |
+| TC24 | Nhật ký đơn | Nhân viên thay đổi trạng thái | Lịch sử có trạng thái, thời gian và người thực hiện |
+| TC25 | Admin quản lý người dùng | Khóa/mở khóa tài khoản | Trạng thái tài khoản thay đổi và được lưu |
+| TC26 | Kiểm tra tài khoản bị khóa | Dùng tài khoản đã khóa để đăng nhập | Hệ thống từ chối đăng nhập |
+| TC27 | Admin bật/tắt món | Tắt một món | Món không còn cho thêm vào giỏ; bật lại thì có thể chọn |
+| TC28 | Admin quản lý khuyến mãi | Tạo/bật/tắt/xóa mã | Danh sách khuyến mãi cập nhật |
+| TC29 | Admin quản lý đơn | Mở tab Đơn hàng | Xem toàn bộ đơn và chi tiết nghiệp vụ |
+| TC30 | Admin báo cáo | Mở Báo cáo | Có doanh thu, tổng đơn, giá trị TB, tỷ lệ hoàn tất, top món |
 
 ## 3. Kiểm thử kỹ thuật
 
