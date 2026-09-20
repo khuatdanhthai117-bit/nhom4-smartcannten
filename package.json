@@ -1,6 +1,6 @@
 {
   "name": "smart-canteen",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "private": true,
   "description": "Hệ thống đặt món trước và quản lý vận hành căn tin, với giao diện Smart Canteen và máy chủ Node.js demo.",
   "type": "module",
