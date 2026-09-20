@@ -2,6 +2,17 @@
 
 Các thay đổi đáng chú ý của Smart Canteen.
 
+## 1.5.1 - 2026-09-20
+
+### Sửa lỗi
+- Sửa đăng nhập tài khoản demo khi trình duyệt chưa có dữ liệu phiên.
+- Tôn trọng trạng thái khóa/mở khóa tài khoản do Admin quản lý.
+- Sửa kiểm thử frontend để khớp giao diện Admin/Staff mới mà không phụ thuộc câu lệnh cũ.
+- Bổ sung timestamp và nhật ký trạng thái cho đơn mới.
+- Đồng bộ trạng thái hủy đơn với nhật ký vận hành.
+- Cập nhật trạng thái nút tab Admin sau khi chuyển khu vực.
+- Bổ sung bảo vệ không cho Admin tự khóa tài khoản đang đăng nhập.
+
 ## 1.5.0 - 2026-09-20
 
 ### Nâng cấp vận hành
