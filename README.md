@@ -82,22 +82,31 @@ Xây dựng một hệ thống web có giao diện trực quan, dễ sử dụng
 
 ### 4.2. Chức năng dành cho nhân viên
 
-- Xem danh sách đơn cần xử lý.
-- Tiếp nhận đơn.
-- Chuyển đơn sang trạng thái đang chuẩn bị.
-- Đánh dấu đơn sẵn sàng.
-- Xác nhận đơn đã được nhận.
-- Từ chối đơn trong trường hợp được mô phỏng cho phép.
-- Theo dõi và cập nhật thông tin nguyên liệu/tồn kho demo.
+- Xem dashboard vận hành theo các trạng thái: chờ xác nhận, đã xác nhận, đang chuẩn bị và sẵn sàng.
+- Tìm kiếm đơn theo mã đơn, tên khách hàng hoặc mã nhận món.
+- Lọc đơn theo trạng thái để tập trung vào nhóm cần xử lý.
+- Nhận biết các đơn chờ xử lý lâu và gắn mức ưu tiên “Cần xử lý gấp”.
+- Xem chi tiết toàn bộ đơn: món, số lượng, tiền, khung giờ, thanh toán và ghi chú.
+- Ghi nhật ký thay đổi trạng thái với thời gian và người thực hiện trong dữ liệu demo.
+- Tiếp nhận đơn và chuyển sang đã xác nhận.
+- Bắt đầu chế biến và chuyển sang đang chuẩn bị.
+- Đánh dấu món đã hoàn thành và chuyển sang sẵn sàng.
+- Xác nhận giao món bằng mã nhận của khách.
+- Từ chối đơn với lý do bắt buộc để tạo dấu vết xử lý.
+- Theo dõi nguyên liệu, mức tối thiểu và cảnh báo sắp hết/hết.
+- Cập nhật số lượng và mức cảnh báo của nguyên liệu.
 
 ### 4.3. Chức năng dành cho quản trị viên
 
-- Quản lý món ăn.
-- Quản lý nguyên liệu và tồn kho.
-- Quản lý chương trình khuyến mãi.
-- Theo dõi và quản lý đánh giá.
-- Xem báo cáo doanh thu mô phỏng.
-- Theo dõi nhóm món bán chạy.
+- Dashboard tổng quan về doanh thu, đơn hôm nay, người dùng hoạt động và kho cần chú ý.
+- Xem phân bố đơn theo từng trạng thái và nhóm món được gọi nhiều.
+- Quản lý toàn bộ đơn hàng và mở chi tiết nghiệp vụ.
+- Quản lý món ăn: thêm, sửa, xóa, bật/tắt bán, giá, danh mục, tồn kho và thông tin hiển thị.
+- Quản lý người dùng: tìm kiếm theo tên/email/MSSV, xem vai trò và khóa/mở khóa tài khoản demo.
+- Quản lý nguyên liệu và mức cảnh báo tồn kho.
+- Quản lý khuyến mãi: tạo, bật/tắt và xóa mã ưu đãi.
+- Theo dõi đánh giá và điểm trung bình từ người dùng.
+- Xem báo cáo doanh thu, giá trị đơn trung bình, tỷ lệ hoàn tất, top món và phân bố trạng thái.
 
 ## 🔄 5. Quy trình nghiệp vụ
 
