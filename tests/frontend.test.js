@@ -72,7 +72,7 @@ test('frontend exposes the complete admin flow', () => {
 });
 
 test('frontend keeps checkout and promotion rules', () => {
-  hasText('cancelDeadline:Date.now()+5*60*1000');
+  hasText('cancelDeadline:now+5*60*1000');
   hasText("payment='Ví MoMo'");
   hasText("slot='11:00 – 11:15'");
   hasText('function totals()');
