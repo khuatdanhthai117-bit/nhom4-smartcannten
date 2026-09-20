@@ -56,7 +56,7 @@
       user={id:"guest-"+Date.now(),name:"Khách "+phone.slice(-4),identifier:phone,phone,role:"guest"};
     }else{
       const pass=$("password").value;
-      const stored=readState();const users=Array.isArray(stored.users)?stored.users:[];const found=users.find(u=>(u.identifier?.toLowerCase()===identifier.toLowerCase()||u.email?.toLowerCase()===identifier.toLowerCase())&&u.password===pass);
+      const stored=readState();const users=Array.isArray(stored.users)?stored.users:[];const candidates=[...DEMO_USERS,...users];const found=candidates.find(u=>(u.identifier?.toLowerCase()===identifier.toLowerCase()||u.email?.toLowerCase()===identifier.toLowerCase())&&u.password===pass);
       if(!found)return showMessage("Tài khoản hoặc mật khẩu không đúng.");
       if(found.active===false)return showMessage("Tài khoản đang bị tạm khóa. Vui lòng liên hệ quản trị viên.");
       if(mode==="student"&&found.role!=="student")return showMessage("Hãy dùng tài khoản sinh viên.");
