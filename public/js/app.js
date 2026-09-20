@@ -39,7 +39,7 @@ const extraMenu=[
 {id:19,name:'Nước cam tươi',price:25000,cat:'drink',emoji:'🍊',desc:'Cam tươi ép tại chỗ, vị chua ngọt tự nhiên.',ingredients:'Cam tươi, đá',calories:110,prepTime:'3–5 phút',rating:4.9,reviewsCount:77,sold:238,spicy:'Không',fit:'Giải khát'},
 {id:20,name:'Combo sinh viên',price:55000,cat:'com',emoji:'🍱',tag:'Tiết kiệm',desc:'Cơm gà + trà chanh + món ăn kèm, phù hợp bữa trưa.',ingredients:'Cơm, gà, trà chanh, món ăn kèm',calories:760,prepTime:'12–18 phút',rating:4.9,reviewsCount:109,sold:267,spicy:'Vừa',fit:'Bữa trưa tiết kiệm'}];
 for(const item of data.menu){const extra=richMenuDetails[item.id];if(extra)Object.assign(item,extra);if(typeof item.available!=='boolean')item.available=true;if(typeof item.stock!=='number')item.stock=item.available===false?0:20;}
-for(const item of extraMenu){if(!data.menu.some(x=>Number(x.id)===item.id))data.menu.push({...item,available:true,stock:20);}
+for(const item of extraMenu){if(!data.menu.some(x=>Number(x.id)===item.id))data.menu.push({...item,available:true,stock:20});}
 let currentUser=(()=>{try{return JSON.parse(localStorage.getItem('smartCanteenDemoUser')||localStorage.getItem('currentUser')||'null')}catch{return null}})();
 if(!currentUser||!currentUser.role){window.location.replace('./index.html');return}
 let cart=[],cat='all',discount='',payment='Ví MoMo',slot='11:00 – 11:15';
