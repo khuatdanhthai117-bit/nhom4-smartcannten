@@ -37,6 +37,8 @@
 - UC18 – Chuyển đơn sang trạng thái sẵn sàng.
 - UC19 – Xác nhận khách đã nhận món.
 - UC20 – Cập nhật tồn kho nguyên liệu.
+- UC27 – Tìm kiếm, lọc và ưu tiên đơn hàng.
+- UC28 – Xem chi tiết và nhật ký trạng thái đơn.
 
 ### Nhóm quản trị
 
@@ -46,6 +48,10 @@
 - UC24 – Quản lý khuyến mãi.
 - UC25 – Quản lý đánh giá.
 - UC26 – Xem báo cáo doanh thu / món bán chạy / trạng thái đơn.
+- UC29 – Quản lý tài khoản người dùng.
+- UC30 – Quản lý trạng thái bán của món.
+- UC31 – Quản lý và bật/tắt khuyến mãi.
+- UC32 – Xem và phân tích đánh giá.
 
 ## 3. Đặc tả Use Case tiêu biểu
 
@@ -130,3 +136,44 @@ Sẵn sàng
 ```
 
 Các trạng thái kết thúc khác có thể gồm `Đã từ chối` hoặc `Đã hủy` theo logic demo hiện tại.
+
+
+## 6. Đặc tả nghiệp vụ nâng cao
+
+### UC27 – Tìm kiếm, lọc và ưu tiên đơn hàng
+
+**Actor:** Nhân viên.
+
+**Mục đích:** Giúp nhân viên tập trung vào đơn cần xử lý và giảm thao tác khi số lượng đơn tăng.
+
+**Chức năng:**
+1. Lọc theo trạng thái.
+2. Tìm theo mã đơn.
+3. Tìm theo tên khách hàng.
+4. Tìm theo mã nhận món.
+5. Nhận biết đơn chờ xử lý lâu và gắn mức **Cần xử lý gấp**.
+6. Xem thời điểm cập nhật trạng thái cuối.
+
+### UC28 – Xem chi tiết và nhật ký trạng thái
+
+Nhân viên có thể mở một đơn để xem toàn bộ món, tiền, phương thức thanh toán, khung giờ nhận, ghi chú và lịch sử trạng thái. Mỗi thay đổi trạng thái mới được ghi với thời gian, người thực hiện và mô tả thao tác trong dữ liệu demo.
+
+### UC29 – Quản lý tài khoản người dùng
+
+**Actor:** Admin.
+
+Admin có thể tìm kiếm tài khoản theo tên, email hoặc MSSV; theo dõi vai trò; xem trạng thái hoạt động; khóa/mở khóa tài khoản trong phạm vi demo.
+
+### UC30 – Quản lý trạng thái bán của món
+
+**Actor:** Admin.
+
+Admin có thể bật/tắt một món trên thực đơn mà không cần xóa dữ liệu món. Trạng thái được phản ánh lại ở menu khách hàng.
+
+### UC31 – Quản lý khuyến mãi
+
+Admin có thể tạo mã mới, bật/tắt mã và xóa chương trình trong dữ liệu demo. Mã được chuẩn hóa thành chữ hoa trước khi lưu.
+
+### UC32 – Phân tích đánh giá
+
+Admin theo dõi số lượng phản hồi và điểm trung bình. Khi người dùng gửi đánh giá, điểm tổng hợp của món có thể được cập nhật trong dữ liệu demo.
