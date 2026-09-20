@@ -101,3 +101,37 @@ test('frontend defines a shared dynamic modal container', () => {
   hasText('id="modal" class="overlay"');
   hasText('document.getElementById(\'modal\').innerHTML');
 });
+
+test('staff dashboard includes deeper operations', () => {
+  for (const marker of [
+    'Trung tâm vận hành nhân viên',
+    'Cần xử lý gấp',
+    'Hàng chờ xử lý',
+    'Nhật ký trạng thái',
+    'Xem chi tiết'
+  ]) hasText(marker);
+});
+
+test('admin dashboard includes deeper management areas', () => {
+  for (const marker of [
+    'Trung tâm quản trị Smart Canteen',
+    'Quản lý đơn hàng',
+    'Quản lý người dùng',
+    'Quản lý thực đơn',
+    'Quản lý kho nguyên liệu',
+    'Quản lý khuyến mãi',
+    'Báo cáo vận hành',
+    'Hướng dẫn quản trị'
+  ]) hasText(marker);
+});
+
+test('admin can manage menu availability and richer stock fields', () => {
+  hasText('Tắt bán');
+  hasText('Tồn kho demo');
+  hasText('Trạng thái');
+  hasText('Đã bật bán');
+});
+
+test('login respects admin-managed account status', () => {
+  assert.match(fs.readFileSync(path.join(root, 'public', 'js', 'login.js'), 'utf8'), /found.active===false/);
+});
