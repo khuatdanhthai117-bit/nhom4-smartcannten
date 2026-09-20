@@ -25,7 +25,7 @@ test('frontend keeps the Smart Canteen core roles', () => {
 });
 
 test('frontend keeps the main user areas', () => {
-  for (const marker of ['Thực đơn hôm nay', 'Giỏ hàng', 'Đơn hàng của tôi', 'Bảng điều khiển nhân viên', 'Quản trị hệ thống']) hasText(marker);
+  for (const marker of ['Thực đơn hôm nay', 'Giỏ hàng', 'Đơn hàng của tôi', 'Trung tâm vận hành nhân viên', 'Quản trị hệ thống']) hasText(marker);
 });
 
 test('frontend keeps the order workflow states', () => {
@@ -60,7 +60,7 @@ test('frontend exposes the complete staff flow', () => {
     hasText(`function ${fn}`);
   }
   hasText('Mã nhận món không đúng.');
-  hasText("o.status='Đã nhận'");
+  hasText("recordOrderEvent(o,'Đã nhận'");
 });
 
 test('frontend exposes the complete admin flow', () => {
@@ -68,7 +68,7 @@ test('frontend exposes the complete admin flow', () => {
     hasText(`function ${fn}`);
   }
   hasText("currentUser.role!=='admin'");
-  hasText('Xóa món này?');
+  hasText('Xóa món này khỏi thực đơn demo?');
 });
 
 test('frontend keeps checkout and promotion rules', () => {
