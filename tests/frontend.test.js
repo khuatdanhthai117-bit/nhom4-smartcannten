@@ -25,7 +25,7 @@ test('frontend keeps the Smart Canteen core roles', () => {
 });
 
 test('frontend keeps the main user areas', () => {
-  for (const marker of ['Thực đơn hôm nay', 'Giỏ hàng', 'Đơn hàng của tôi', 'Trung tâm vận hành nhân viên', 'Quản trị hệ thống']) hasText(marker);
+  for (const marker of ['Thực đơn hôm nay', 'Giỏ hàng', 'Đơn hàng của tôi', 'Trung tâm vận hành nhân viên', 'Trung tâm quản trị Smart Canteen']) hasText(marker);
 });
 
 test('frontend keeps the order workflow states', () => {
